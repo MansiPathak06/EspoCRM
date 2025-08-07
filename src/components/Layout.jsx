@@ -1,7 +1,7 @@
 // src/components/Layout.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, Link } from "react-router-dom";
-import logo from "../assets/logo.avif";
+import logo from "../assets/logo.webp";
 import {
   FaHome,
   FaUserTie,
