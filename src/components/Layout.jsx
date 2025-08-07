@@ -37,8 +37,68 @@ const Layout = () => {
     };
   }, []);
 
+  useEffect(() => {
+  function handleClickOutside(event) {
+    if (
+      moreMenuRef.current && !moreMenuRef.current.contains(event.target) &&
+      createMenuRef.current && !createMenuRef.current.contains(event.target)
+    ) {
+      setShowMoreMenu(false);
+      setShowCreateMenu(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+const [showFilterMenu, setShowFilterMenu] = useState(false);
+const filterMenuRef = useRef(null);
+
+useEffect(() => {
+  function handleClickOutside(event) {
+    if (filterMenuRef.current && !filterMenuRef.current.contains(event.target)) {
+      setShowFilterMenu(false);
+    }
+  }
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+useEffect(() => {
+  function handleClickOutside(event) {
+    if (
+      moreMenuRef.current && !moreMenuRef.current.contains(event.target) &&
+      createMenuRef.current && !createMenuRef.current.contains(event.target) &&
+      userMenuRef.current && !userMenuRef.current.contains(event.target)
+    ) {
+      setShowMoreMenu(false);
+      setShowCreateMenu(false);
+      setShowUserMenu(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreMenuRef = useRef(null);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
+const createMenuRef = useRef(null);
+const [showUserMenu, setShowUserMenu] = useState(false);
+const userMenuRef = useRef(null);
+
+
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -301,22 +361,156 @@ const Layout = () => {
       <div className="flex flex-col flex-1">
         {/* Topbar */}
         <header className="bg-white px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-          <div className="flex items-center gap-2 w-1/3">
-            <FaSearch className="text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full px-2 py-1 border border-gray-300 rounded-md"
-            />
-          </div>
+  <div className="flex items-center gap-2 w-1/2 relative">
+    <FaSearch className="text-gray-400" />
+    <input
+      type="text"
+      placeholder="Search"
+      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+    />
+
+    {/* 3-dot dropdown beside Search */}
+    <div className="relative ml-2" ref={filterMenuRef}>
+      <button onClick={() => setShowFilterMenu(!showFilterMenu)}>
+        <span className="text-xl text-gray-600 hover:text-blue-600">⋮</span>
+      </button>
+
+      {showFilterMenu && (
+        <div className="absolute right-0 top-8 w-56 bg-white border rounded shadow-md z-50">
+          <div className="text-sm font-semibold px-4 py-2 text-gray-600 border-b">Add Field</div>
+          <ul className="text-sm text-gray-700 max-h-64 overflow-y-auto">
+            {[
+              "Assigned User",
+              "Teams",
+              "Created At",
+              "Created By",
+              "Modified At",
+              "Stream Updated At",
+              "Type",
+              "Industry",
+              "Description",
+              "Email",
+              "Phone",
+              "Target Lists",
+              "Country",
+              "Billing Address",
+              "Shipping Address",
+              "Website",
+              "Campaign",
+            ].map((item, idx) => (
+              <li
+                key={idx}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  // Optional: apply filter
+                  setShowFilterMenu(false);
+                }}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+
           <div className="flex items-center gap-4 text-gray-500 text-lg">
-            <FaPlus className="cursor-pointer hover:text-blue-600" />
+           <div className="relative" ref={createMenuRef}>
+  <FaPlus
+    className="cursor-pointer hover:text-blue-600"
+    onClick={() => setShowCreateMenu(!showCreateMenu)}
+  />
+
+  {showCreateMenu && (
+    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-50">
+      <div className="py-2 text-sm text-gray-700">
+        <div className="px-4 py-1 text-gray-500">Create</div>
+        <ul>
+          {[
+            { label: "Account", path: "/accounts" },
+            { label: "Contact", path: "/contact" },
+            { label: "Lead", path: "/leads" },
+            { label: "Opportunity", path: "/opportunity" },
+            { label: "Meeting", path: "/meetings" },
+            { label: "Call", path: "/calls" },
+            { label: "Task", path: "/task" },
+            { label: "Case", path: "/cases" },
+            { label: "Email", path: "/email" }
+          ].map(({ label, path }, idx) => (
+            <li key={idx}>
+              <Link
+                to={path}
+                onClick={() => setShowCreateMenu(false)}
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )}
+</div>
+
             <FaBell className="cursor-pointer hover:text-blue-600" />
-            <img
-              src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff"
-              alt="User Avatar"
-              className="w-8 h-8 rounded-full"
-            />
+            <div className="relative" ref={userMenuRef}>
+  <img
+    src="https://ui-avatars.com/api/?name=AD&background=0D8ABC&color=fff"
+    alt="User Avatar"
+    className="w-8 h-8 rounded-full cursor-pointer"
+    onClick={() => setShowUserMenu(!showUserMenu)}
+  />
+
+  {showUserMenu && (
+    <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow z-50 text-sm text-gray-700">
+      <div className="px-4 py-2 border-b">
+        <span className="text-xs uppercase text-gray-400">AD</span>
+        <div className="text-sm font-medium">Admin</div>
+      </div>
+      <ul className="py-1">
+        <li>
+          <Link to="/admin" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
+            Administration
+          </Link>
+        </li>
+        <li>
+          <Link to="/preferences" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
+            Preferences
+          </Link>
+        </li>
+        <li>
+          <Link to="/last-viewed" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
+            Last Viewed
+          </Link>
+        </li>
+        <li>
+          <Link to="/about" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
+            About
+          </Link>
+        </li>
+        <li>
+  <button
+    onClick={() => {
+      setShowUserMenu(false);
+      const confirmed = window.confirm("Are you sure you want to log out?");
+      if (confirmed) {
+        // Clear token or any logout logic
+        window.location.href = "/login";
+      }
+    }}
+    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+  >
+    Log Out
+  </button>
+</li>
+
+      </ul>
+    </div>
+  )}
+</div>
+
           </div>
         </header>
 

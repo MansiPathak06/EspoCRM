@@ -10,6 +10,8 @@ import {
 
 const AccountsPage = () => {
   const [view, setView] = useState("list"); // 'list' or 'create'
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const [accounts, setAccounts] = useState([]);
   const [formData, setFormData] = useState({
     name: "",

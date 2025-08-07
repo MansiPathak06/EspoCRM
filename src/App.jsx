@@ -27,6 +27,11 @@ import EmailTemplates from "./components/EmailTemplates";
 import Templates from "./components/Templates";
 import Import from "./components/Import";
 import DashletOptionsModal from "./pages/DashletOptionsModal";
+import Post from "./pages/Post";
+import Admin from "./Admin/Admin";
+import Preferences from "./Admin/Preferences";
+import LastViewed from "./Admin/LastViewed";
+import About from "./Admin/About";
 
 const App = () => {
   return (
@@ -60,6 +65,11 @@ const App = () => {
           <Route path="templates" element={<Templates/>} />
           <Route path="import" element={<Import/>} />
           <Route path="DashletOptionsModal" element={<DashletOptionsModal/>} />
+          <Route path="Post" element={<Post/>} />
+          <Route path="admin" element={<Admin/>} />
+          <Route path="preferences" element={<Preferences/>} />
+          <Route path="last-viewed" element={<LastViewed/>} />
+          <Route path="about" element={<About/>} />
 
         </Route>
 

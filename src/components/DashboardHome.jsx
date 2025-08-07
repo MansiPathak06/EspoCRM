@@ -1,38 +1,59 @@
-import React, { useState } from 'react';
-import { MoreHorizontal, Plus, Eye, RotateCcw, Settings, X, Calendar, Phone, CheckSquare } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  MoreHorizontal,
+  Plus,
+  Eye,
+  RotateCcw,
+  Settings,
+  X,
+  Calendar,
+  Phone,
+  CheckSquare,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import DashletOptionsModal from '../pages/DashletOptionsModal';
-
-
+import DashletOptionsModal from "../pages/DashletOptionsModal";
+import StreamOptionsModal from "../pages/StreamOptionsModal";
 
 const DashboardHome = () => {
   const [streamDropdownOpen, setStreamDropdownOpen] = useState(false);
   const [activitiesDropdownOpen, setActivitiesDropdownOpen] = useState(false);
-    const [showOptions, setShowOptions] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [open, setOpen] = useState(false); // for Stream Options modal
 
   const StreamDropdownMenu = () => (
     <div className="absolute right-0 top-8 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-10">
-      <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+      <Link
+        to="/post"
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
         <Plus className="w-4 h-4 mr-3" />
         Create Post
-      </button>
-      <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+      </Link>
+
+      <Link
+        to="/post"
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
         <Eye className="w-4 h-4 mr-3" />
         View
-      </button>
+      </Link>
+
       <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
         <RotateCcw className="w-4 h-4 mr-3" />
         Refresh
       </button>
+
       <button
-        onClick={() => setShowOptions(true)}
+        onClick={() => {
+          setOpen(true);
+          setStreamDropdownOpen(false); // 👈 this line
+        }}
         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
       >
         <Settings className="w-4 h-4 mr-3" />
         Options
       </button>
 
-      <DashletOptionsModal isOpen={showOptions} onClose={() => setShowOptions(false)} />
       <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
         <X className="w-4 h-4 mr-3" />
         Remove
@@ -43,44 +64,51 @@ const DashboardHome = () => {
   const ActivitiesDropdownMenu = () => (
     <div className="absolute right-0 top-8 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-10">
       <Link
-  to="/meetings"
-  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
->
-  <Plus className="w-4 h-4 mr-3" />
-  Create Meeting
-</Link>
+        to="/meetings"
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        <Plus className="w-4 h-4 mr-3" />
+        Create Meeting
+      </Link>
 
-     <Link
-  to="/calls"
-  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
->
-  <Plus className="w-4 h-4 mr-3" />
-  Create Call
-</Link>
+      <Link
+        to="/calls"
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        <Plus className="w-4 h-4 mr-3" />
+        Create Call
+      </Link>
 
-     <Link
-  to="/task"
-  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
->
-  <Plus className="w-4 h-4 mr-3" />
-  Create Task
-</Link>
+      <Link
+        to="/task"
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        <Plus className="w-4 h-4 mr-3" />
+        Create Task
+      </Link>
 
       <div className="border-t border-gray-100 my-1"></div>
       <button
-  onClick={() => {
-    window.location.href = "/dashboard";
-  }}
-  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
->
-  <RotateCcw className="w-4 h-4 mr-3" />
-  Refresh
-</button>
+        onClick={() => {
+          window.location.href = "/dashboard";
+        }}
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        <RotateCcw className="w-4 h-4 mr-3" />
+        Refresh
+      </button>
 
-      <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+      <button
+        onClick={() => {
+          setShowOptions(true);
+          setActivitiesDropdownOpen(false); // 👈 this line
+        }}
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
         <Settings className="w-4 h-4 mr-3" />
         Options
       </button>
+
       <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
         <X className="w-4 h-4 mr-3" />
         Remove
@@ -96,8 +124,8 @@ const DashboardHome = () => {
     };
 
     if (streamDropdownOpen || activitiesDropdownOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [streamDropdownOpen, activitiesDropdownOpen]);
 
@@ -148,6 +176,11 @@ const DashboardHome = () => {
           <p className="text-gray-500 text-sm">No Data</p>
         </div>
       </section>
+      <StreamOptionsModal isOpen={open} onClose={() => setOpen(false)} />
+      <DashletOptionsModal
+        isOpen={showOptions}
+        onClose={() => setShowOptions(false)}
+      />
     </div>
   );
 };
