@@ -46,7 +46,11 @@ const App = () => {
     <Router>
       <Routes>
         {/* Login route - no layout */}
+
+
         <Route path="/login" element={<Login />} />
+
+                <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Layout with sidebar and topbar */}
         <Route path="/" element={<Layout />}>
