@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Settings, 
   Users, 
@@ -52,21 +53,25 @@ import {
 } from "lucide-react";
 
 const Admin = ({ onNavigate }) => {
+  const navigate = useNavigate();
   const [expandedSections, setExpandedSections] = useState({});
   const [showDescriptions, setShowDescriptions] = useState(false);
 
   // Function to handle navigation
-  const handleItemClick = (itemName, sectionTitle) => {
-    // Convert to route-friendly format
-    const route = `/${sectionTitle.toLowerCase()}/${itemName.toLowerCase().replace(/\s+/g, '-')}`;
+  const handleItemClick = (item, sectionTitle) => {
+    // Use predefined route or generate one
+    const route = item.route || `/${sectionTitle.toLowerCase()}/${item.name.toLowerCase().replace(/\s+/g, '-')}`;
     
     // Call external navigation handler if provided
     if (onNavigate) {
-      onNavigate(route, { item: itemName, section: sectionTitle });
+      onNavigate(route, { item: item.name, section: sectionTitle });
+    } else {
+      // Use React Router navigation
+      navigate(route);
     }
     
-    // For now, just log the navigation attempt
-    console.log(`Navigating to: ${route}`, { item: itemName, section: sectionTitle });
+    // Log the navigation attempt
+    console.log(`Navigating to: ${route}`, { item: item.name, section: sectionTitle });
   };
 
   const toggleSection = (sectionIndex) => {
@@ -219,25 +224,25 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Entity Manager", 
           icon: <Database className="w-4 h-4" />, 
-          route: "/admin/customization/entity-manager",
+          route: "/customization/entity-manager",
           description: "Create and edit custom entities. Manage fields and relationships."
         },
         { 
           name: "Layout Manager", 
           icon: <Layout className="w-4 h-4" />, 
-          route: "/admin/customization/layout-manager",
+          route: "/customization/layout-manager",
           description: "Customize layouts (list, detail, edit, search, mass update)."
         },
         { 
           name: "Label Manager", 
           icon: <Type className="w-4 h-4" />, 
-          route: "/admin/customization/label-manager",
+          route: "/customization/label-manager",
           description: "Customize application labels."
         },
         { 
           name: "Template Manager", 
           icon: <FileText className="w-4 h-4" />, 
-          route: "/admin/customization/template-manager",
+          route: "/customization/template-manager",
           description: "Customize message templates."
         }
       ]
@@ -250,49 +255,49 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Outbound Emails", 
           icon: <Send className="w-4 h-4" />, 
-          route: "/admin/messaging/outbound-emails",
+          route: "/messaging/outbound-emails",
           description: "SMTP settings for outgoing emails."
         },
         { 
           name: "Inbound Emails", 
           icon: <Download className="w-4 h-4" />, 
-          route: "/admin/messaging/inbound-emails",
+          route: "/messaging/inbound-emails",
           description: "Settings for incoming emails."
         },
         { 
           name: "Group Email Accounts", 
           icon: <Mail className="w-4 h-4" />, 
-          route: "/admin/messaging/group-email-accounts",
+          route: "/messaging/group-email-accounts",
           description: "Group IMAP email accounts. Email import and Email-to-Case."
         },
         { 
           name: "Personal Email Accounts", 
           icon: <AtSign className="w-4 h-4" />, 
-          route: "/admin/messaging/personal-email-accounts",
+          route: "/messaging/personal-email-accounts",
           description: "Users email accounts."
         },
         { 
           name: "Email Filters", 
           icon: <Wrench className="w-4 h-4" />, 
-          route: "/admin/messaging/email-filters",
+          route: "/messaging/email-filters",
           description: "Email messages that match the specified filter won't be imported."
         },
         { 
           name: "Group Email Folders", 
           icon: <FolderOpen className="w-4 h-4" />, 
-          route: "/admin/messaging/group-email-folders",
+          route: "/messaging/group-email-folders",
           description: "Email folders shared for teams."
         },
         { 
           name: "Email Templates", 
           icon: <FileText className="w-4 h-4" />, 
-          route: "/admin/messaging/email-templates",
+          route: "/messaging/email-templates",
           description: "Templates for outbound emails."
         },
         { 
           name: "SMS", 
           icon: <Smartphone className="w-4 h-4" />, 
-          route: "/admin/messaging/sms",
+          route: "/messaging/sms",
           description: "SMS settings."
         }
       ]
@@ -305,19 +310,19 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Portals", 
           icon: <Globe className="w-4 h-4" />, 
-          route: "/admin/portal/portals",
+          route: "/portal/portals",
           description: "Portals management."
         },
         { 
           name: "Portal Users", 
           icon: <UserCheck className="w-4 h-4" />, 
-          route: "/admin/portal/users",
+          route: "/portal/users",
           description: "Users of portal."
         },
         { 
           name: "Portal Roles", 
           icon: <UserCog className="w-4 h-4" />, 
-          route: "/admin/portal/roles",
+          route: "/portal/roles",
           description: "Roles for portal."
         }
       ]
@@ -330,49 +335,49 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Working Time Calendars", 
           icon: <Calendar className="w-4 h-4" />, 
-          route: "/admin/setup/working-time-calendars",
+          route: "/setup/working-time-calendars",
           description: "Working schedule."
         },
         { 
           name: "Layout Sets", 
           icon: <Layout className="w-4 h-4" />, 
-          route: "/admin/setup/layout-sets",
+          route: "/setup/layout-sets",
           description: "Collections of layouts that can be assigned to teams & portals."
         },
         { 
           name: "Dashboard Templates", 
           icon: <BarChart3 className="w-4 h-4" />, 
-          route: "/admin/setup/dashboard-templates",
+          route: "/setup/dashboard-templates",
           description: "Deploy dashboards to users."
         },
         { 
           name: "Lead Capture", 
           icon: <Target className="w-4 h-4" />, 
-          route: "/admin/setup/lead-capture",
+          route: "/setup/lead-capture",
           description: "Lead capture endpoints and web forms."
         },
         { 
           name: "PDF Templates", 
           icon: <FileImage className="w-4 h-4" />, 
-          route: "/admin/setup/pdf-templates",
+          route: "/setup/pdf-templates",
           description: "Templates for printing to PDF."
         },
         { 
           name: "Webhooks", 
           icon: <Webhook className="w-4 h-4" />, 
-          route: "/admin/setup/webhooks",
+          route: "/setup/webhooks",
           description: "Manage webhooks."
         },
         { 
           name: "Address Countries", 
           icon: <MapPin className="w-4 h-4" />, 
-          route: "/admin/setup/address-countries",
+          route: "/setup/address-countries",
           description: "Countries available for address fields."
         },
         { 
           name: "Authentication Providers", 
           icon: <Shield className="w-4 h-4" />, 
-          route: "/admin/setup/authentication-providers",
+          route: "/setup/authentication-providers",
           description: "Additional authentication providers for portals."
         }
       ]
@@ -385,49 +390,49 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Import", 
           icon: <Import className="w-4 h-4" />, 
-          route: "/admin/data/import",
+          route: "/data/import",
           description: "Import data from CSV file."
         },
         { 
           name: "Attachments", 
           icon: <Paperclip className="w-4 h-4" />, 
-          route: "/admin/data/attachments",
+          route: "/data/attachments",
           description: "All file attachments stored in the system."
         },
         { 
           name: "Jobs", 
           icon: <Briefcase className="w-4 h-4" />, 
-          route: "/admin/data/jobs",
+          route: "/data/jobs",
           description: "Jobs execute tasks in the background."
         },
         { 
           name: "Email Addresses", 
           icon: <AtSign className="w-4 h-4" />, 
-          route: "/admin/data/email-addresses",
+          route: "/data/email-addresses",
           description: "All email addresses stored in the system."
         },
         { 
           name: "Phone Numbers", 
           icon: <Phone className="w-4 h-4" />, 
-          route: "/admin/data/phone-numbers",
+          route: "/data/phone-numbers",
           description: "All phone numbers stored in the system."
         },
         { 
           name: "App Secrets", 
           icon: <Lock className="w-4 h-4" />, 
-          route: "/admin/data/app-secrets",
+          route: "/data/app-secrets",
           description: "Store sensitive information like API keys, passwords, and other secrets."
         },
         { 
           name: "OAuth Providers", 
           icon: <CloudLightning className="w-4 h-4" />, 
-          route: "/admin/data/oauth-providers",
+          route: "/data/oauth-providers",
           description: "OAuth providers for integrations."
         },
         { 
           name: "App Log", 
           icon: <FileBarChart className="w-4 h-4" />, 
-          route: "/admin/data/app-log",
+          route: "/data/app-log",
           description: "Application log."
         }
       ]
@@ -440,7 +445,7 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Formula Sandbox", 
           icon: <Calculator className="w-4 h-4" />, 
-          route: "/admin/misc/formula-sandbox",
+          route: "/misc/formula-sandbox",
           description: "Write and test formula scripts."
         }
       ]
@@ -500,7 +505,7 @@ const Admin = ({ onNavigate }) => {
                     {section.items.map((item, itemIndex) => (
                       <button
                         key={itemIndex}
-                        onClick={() => handleItemClick(item.name, section.title)}
+                        onClick={() => handleItemClick(item, section.title)}
                         className="w-full flex items-start space-x-3 px-3 py-3 text-left rounded-md hover:bg-gray-50 transition-colors duration-150 group cursor-pointer"
                       >
                         <div className="text-gray-400 group-hover:text-blue-600 transition-colors duration-150 mt-0.5 flex-shrink-0">

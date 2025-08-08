@@ -428,29 +428,7 @@ const AccountsPage = () => {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="bg-white border-b px-4 sm:px-6 py-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <select className="border border-gray-300 rounded sm:rounded-l sm:rounded-r-none px-3 py-2 bg-white text-sm">
-            <option>All</option>
-          </select>
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full border border-gray-300 rounded sm:border-t sm:border-b sm:border-l-0 sm:border-r-0 sm:rounded-none px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button className="border border-gray-300 rounded sm:rounded-r sm:rounded-l-none px-3 py-2 bg-gray-50 flex-1 sm:flex-none flex justify-center">
-              <Search size={16} />
-            </button>
-            <button className="text-gray-400 px-3 py-2 flex justify-center">
-              <MoreHorizontal size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Content Area */}
       <div className="p-4 sm:p-6">

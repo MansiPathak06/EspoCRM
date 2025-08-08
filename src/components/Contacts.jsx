@@ -104,7 +104,7 @@ const Contacts = () => {
               )}
             </h1>
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="relative flex-1 sm:flex-none">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -124,7 +124,7 @@ const Contacts = () => {
                 <MoreHorizontal className="w-5 h-5" />
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -134,7 +134,7 @@ const Contacts = () => {
           // Contacts List View
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-              <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              {/* <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <div className="relative">
                   <select className="appearance-none bg-white border border-gray-300 rounded px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
                     <option>All</option>
@@ -151,7 +151,7 @@ const Contacts = () => {
                 <button className="p-2 text-gray-400 hover:text-gray-600 self-start sm:self-auto">
                   <MoreHorizontal className="w-5 h-5" />
                 </button>
-              </div>
+              </div> */}
               <button
                 onClick={() => setCurrentView('create')}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center justify-center w-full sm:w-auto"

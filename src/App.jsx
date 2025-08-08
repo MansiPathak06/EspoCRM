@@ -38,6 +38,8 @@ import Preferences from "./Admin/Preferences";
 import LastViewed from "./Admin/LastViewed";
 import About from "./Admin/About";
 import EntityManager from "./Admin/EntityManager";
+import LayoutManager from "./Admin/LayoutManager";
+import AccountEntityManager from "./Admin/Account/AccountEntityManager";
 
 const App = () => {
   return (
@@ -83,7 +85,9 @@ const App = () => {
           <Route path="last-viewed" element={<LastViewed />} />
           <Route path="about" element={<About />} />
           {/* ---------------Admin Routes----------- */}
-           <Route path="entity-manager" element={<EntityManager/>} />
+           <Route path="/customization/entity-manager" element={<EntityManager/>} />
+           <Route path="/customization/layout-manager" element={<LayoutManager/>} />
+           <Route path="/admin/account/AccountEntityManager" element={<AccountEntityManager/>} />
 
         </Route>
 
