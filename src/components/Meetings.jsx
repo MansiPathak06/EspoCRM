@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, Calendar, Clock, Users, MoreHorizontal, ChevronDown, X, User } from 'lucide-react';
+import { Search, Plus, Calendar, Clock, Users, MoreHorizontal, ChevronDown, X, User, Menu } from 'lucide-react';
 
 const Meeting = () => {
   const [currentView, setCurrentView] = useState('list'); // 'list' or 'create'
@@ -60,40 +60,40 @@ const Meeting = () => {
 
   if (currentView === 'create') {
     return (
-      <div className="flex-1 bg-gray-50 p-6">
+      <div className="flex-1 bg-gray-50 p-3 sm:p-4 md:p-6">
         {/* Breadcrumb */}
-        <div className="mb-6">
-          <div className="flex items-center text-sm text-gray-600 mb-4">
+        <div className="mb-4 md:mb-6">
+          <div className="flex items-center text-sm text-gray-600 mb-3 md:mb-4">
             <span className="text-blue-600">Meetings</span>
             <span className="mx-2">›</span>
             <span>create</span>
           </div>
           
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2 md:gap-3">
             <button 
               onClick={handleSave}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded hover:bg-blue-700 transition-colors"
             >
               Save
             </button>
             <button 
               onClick={handleCancel}
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition-colors"
+              className="bg-gray-200 text-gray-700 px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
-            <button className="bg-gray-200 text-gray-700 px-3 py-2 rounded hover:bg-gray-300 transition-colors">
+            <button className="bg-gray-200 text-gray-700 px-2 py-1.5 md:px-3 md:py-2 rounded hover:bg-gray-300 transition-colors">
               <MoreHorizontal size={16} />
             </button>
           </div>
         </div>
 
         {/* Create Form */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 md:p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             {/* Left Column */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -103,7 +103,7 @@ const Meeting = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -114,7 +114,7 @@ const Meeting = () => {
                   <select
                     value={formData.status}
                     onChange={(e) => handleInputChange('status', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="Planned">Planned</option>
                     <option value="Held">Held</option>
@@ -130,22 +130,22 @@ const Meeting = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Date Start <span className="text-red-500">*</span>
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative flex-1">
                     <input
                       type="text"
                       value={formData.dateStart}
                       onChange={(e) => handleInputChange('dateStart', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <Calendar className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                   </div>
-                  <div className="relative w-24">
+                  <div className="relative w-full sm:w-24">
                     <input
                       type="text"
                       value={formData.timeStart}
                       onChange={(e) => handleInputChange('timeStart', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <Clock className="absolute right-2 top-3 h-4 w-4 text-gray-400" />
                   </div>
@@ -159,7 +159,7 @@ const Meeting = () => {
                   <select
                     value={formData.duration}
                     onChange={(e) => handleInputChange('duration', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="15min">15 minutes</option>
                     <option value="30min">30 minutes</option>
@@ -173,16 +173,16 @@ const Meeting = () => {
             </div>
 
             {/* Middle Column */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Parent */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Parent</label>
-                <div className="flex gap-2">
-                  <div className="relative w-32">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="relative w-full sm:w-32">
                     <select
                       value={formData.parent}
                       onChange={(e) => handleInputChange('parent', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="Account">Account</option>
                       <option value="Contact">Contact</option>
@@ -197,7 +197,7 @@ const Meeting = () => {
                       placeholder="Select"
                       value={formData.parentSelect}
                       onChange={(e) => handleInputChange('parentSelect', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-3 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded px-3 py-2 pr-16 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <div className="absolute right-2 top-2 flex gap-1">
                       <button className="p-1 hover:bg-gray-100 rounded">
@@ -216,22 +216,22 @@ const Meeting = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Date End <span className="text-red-500">*</span>
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative flex-1">
                     <input
                       type="text"
                       value={formData.dateEnd}
                       onChange={(e) => handleInputChange('dateEnd', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <Calendar className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                   </div>
-                  <div className="relative w-24">
+                  <div className="relative w-full sm:w-24">
                     <input
                       type="text"
                       value={formData.timeEnd}
                       onChange={(e) => handleInputChange('timeEnd', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <Clock className="absolute right-2 top-3 h-4 w-4 text-gray-400" />
                   </div>
@@ -248,7 +248,7 @@ const Meeting = () => {
             </div>
 
             {/* Right Column */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Assigned User */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -259,7 +259,7 @@ const Meeting = () => {
                     <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-2">
                       <span className="text-white text-xs font-medium">A</span>
                     </div>
-                    <span className="text-gray-900">{formData.assignedUser}</span>
+                    <span className="text-gray-900 text-sm md:text-base">{formData.assignedUser}</span>
                   </div>
                   <div className="absolute right-2 top-2 flex gap-1">
                     <button className="p-1 hover:bg-gray-100 rounded">
@@ -281,7 +281,7 @@ const Meeting = () => {
                     placeholder="Select"
                     value={formData.teams}
                     onChange={(e) => handleInputChange('teams', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                 </div>
@@ -299,7 +299,7 @@ const Meeting = () => {
                         placeholder="Select"
                         value={formData.attendeesUsers}
                         onChange={(e) => handleInputChange('attendeesUsers', e.target.value)}
-                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                     </div>
@@ -314,7 +314,7 @@ const Meeting = () => {
                         placeholder="Select"
                         value={formData.contacts}
                         onChange={(e) => handleInputChange('contacts', e.target.value)}
-                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                     </div>
@@ -329,7 +329,7 @@ const Meeting = () => {
                         placeholder="Select"
                         value={formData.leads}
                         onChange={(e) => handleInputChange('leads', e.target.value)}
-                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                     </div>
@@ -340,61 +340,64 @@ const Meeting = () => {
           </div>
 
           {/* Description - Full Width */}
-          <div className="mt-6">
+          <div className="mt-4 md:mt-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
             <textarea
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               rows={4}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
             />
           </div>
 
           {/* Scheduler */}
-          <div className="mt-8">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Scheduler</h3>
+          <div className="mt-6 md:mt-8">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-4">Scheduler</h3>
             
             {/* Date Header */}
-            <div className="bg-gray-50 px-4 py-2 border border-gray-200 rounded-t">
-              <span className="font-medium text-gray-700">Tue 5 August</span>
+            <div className="bg-gray-50 px-3 md:px-4 py-2 border border-gray-200 rounded-t">
+              <span className="font-medium text-gray-700 text-sm md:text-base">Tue 5 August</span>
             </div>
 
-            {/* Time Grid */}
-            <div className="border-l border-r border-b border-gray-200 rounded-b">
-              <div className="grid grid-cols-9 border-b border-gray-200">
-                <div className="p-2 border-r border-gray-200"></div>
-                {timeSlots.map((time) => (
-                  <div key={time} className="p-2 border-r border-gray-200 text-center text-sm font-medium text-gray-600">
-                    {time}
-                  </div>
-                ))}
-              </div>
-
-              {/* Admin Row */}
-              <div className="grid grid-cols-9 min-h-[60px]">
-                <div className="p-2 border-r border-gray-200 flex items-center">
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-2">
-                      <span className="text-white text-xs font-medium">A</span>
+            {/* Time Grid - Responsive */}
+            <div className="border-l border-r border-b border-gray-200 rounded-b overflow-x-auto">
+              <div className="min-w-[600px]">
+                {/* Header Row */}
+                <div className="grid grid-cols-9 border-b border-gray-200">
+                  <div className="p-2 border-r border-gray-200 min-w-[80px]"></div>
+                  {timeSlots.map((time) => (
+                    <div key={time} className="p-2 border-r border-gray-200 text-center text-xs md:text-sm font-medium text-gray-600 min-w-[60px]">
+                      {time}
                     </div>
-                    <span className="text-sm text-gray-700">Admin</span>
-                  </div>
+                  ))}
                 </div>
-                {timeSlots.map((time, index) => (
-                  <div key={time} className="p-1 border-r border-gray-200 relative">
-                    {/* Meeting blocks */}
-                    {index === 3 && (
-                      <div className="absolute top-1 left-1 right-1 h-8 bg-blue-100 border border-blue-300 rounded flex items-center justify-center">
-                        <div className="w-1 h-6 bg-blue-500 rounded"></div>
+
+                {/* Admin Row */}
+                <div className="grid grid-cols-9 min-h-[60px]">
+                  <div className="p-2 border-r border-gray-200 flex items-center min-w-[80px]">
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 md:w-6 md:h-6 bg-blue-500 rounded-full flex items-center justify-center mr-2">
+                        <span className="text-white text-xs font-medium">A</span>
                       </div>
-                    )}
-                    {index === 4 && (
-                      <div className="absolute top-1 left-1 right-1 h-8 bg-blue-100 border border-blue-300 rounded flex items-center justify-center">
-                        <div className="w-1 h-6 bg-blue-500 rounded"></div>
-                      </div>
-                    )}
+                      <span className="text-xs md:text-sm text-gray-700">Admin</span>
+                    </div>
                   </div>
-                ))}
+                  {timeSlots.map((time, index) => (
+                    <div key={time} className="p-1 border-r border-gray-200 relative min-w-[60px]">
+                      {/* Meeting blocks */}
+                      {index === 3 && (
+                        <div className="absolute top-1 left-1 right-1 h-6 md:h-8 bg-blue-100 border border-blue-300 rounded flex items-center justify-center">
+                          <div className="w-1 h-4 md:h-6 bg-blue-500 rounded"></div>
+                        </div>
+                      )}
+                      {index === 4 && (
+                        <div className="absolute top-1 left-1 right-1 h-6 md:h-8 bg-blue-100 border border-blue-300 rounded flex items-center justify-center">
+                          <div className="w-1 h-4 md:h-6 bg-blue-500 rounded"></div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -405,26 +408,26 @@ const Meeting = () => {
 
   // List View (No Data State)
   return (
-    <div className="flex-1 bg-gray-50 p-6">
+    <div className="flex-1 bg-gray-50 p-3 sm:p-4 md:p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Meetings</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 md:mb-6">
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Meetings</h1>
         
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               type="text"
               placeholder="Search"
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-auto pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           
           {/* Create Button */}
           <button
             onClick={() => setCurrentView('create')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
           >
             <Plus size={16} />
             Create
@@ -433,80 +436,80 @@ const Meeting = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Stream Section */}
         <div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Stream</h2>
-            <div className="text-center py-12">
+          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-medium text-gray-900 mb-4">Stream</h2>
+            <div className="text-center py-8 md:py-12">
               <div className="text-gray-400 mb-2">
-                <Calendar size={48} className="mx-auto mb-4 opacity-50" />
+                <Calendar size={36} className="sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
               </div>
-              <p className="text-gray-500">No Data</p>
+              <p className="text-gray-500 text-sm md:text-base">No Data</p>
             </div>
           </div>
         </div>
 
         {/* My Activities Section */}
         <div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">My Activities</h2>
-            <div className="text-center py-12">
+          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-medium text-gray-900 mb-4">My Activities</h2>
+            <div className="text-center py-8 md:py-12">
               <div className="text-gray-400 mb-2">
-                <Users size={48} className="mx-auto mb-4 opacity-50" />
+                <Users size={36} className="sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
               </div>
-              <p className="text-gray-500">No Data</p>
+              <p className="text-gray-500 text-sm md:text-base">No Data</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Quick Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-        <div className="bg-white rounded-lg shadow-sm p-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-4 md:mt-6">
+        <div className="bg-white rounded-lg shadow-sm p-3 md:p-4">
           <div className="flex items-center">
-            <div className="bg-blue-100 rounded-lg p-2 mr-3">
-              <Calendar className="h-5 w-5 text-blue-600" />
+            <div className="bg-blue-100 rounded-lg p-1.5 md:p-2 mr-2 md:mr-3">
+              <Calendar className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Today</p>
-              <p className="text-lg font-semibold">0</p>
+              <p className="text-xs md:text-sm text-gray-600">Today</p>
+              <p className="text-base md:text-lg font-semibold">0</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white rounded-lg shadow-sm p-3 md:p-4">
           <div className="flex items-center">
-            <div className="bg-green-100 rounded-lg p-2 mr-3">
-              <Clock className="h-5 w-5 text-green-600" />
+            <div className="bg-green-100 rounded-lg p-1.5 md:p-2 mr-2 md:mr-3">
+              <Clock className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">This Week</p>
-              <p className="text-lg font-semibold">0</p>
+              <p className="text-xs md:text-sm text-gray-600">This Week</p>
+              <p className="text-base md:text-lg font-semibold">0</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white rounded-lg shadow-sm p-3 md:p-4">
           <div className="flex items-center">
-            <div className="bg-purple-100 rounded-lg p-2 mr-3">
-              <Users className="h-5 w-5 text-purple-600" />
+            <div className="bg-purple-100 rounded-lg p-1.5 md:p-2 mr-2 md:mr-3">
+              <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Planned</p>
-              <p className="text-lg font-semibold">0</p>
+              <p className="text-xs md:text-sm text-gray-600">Planned</p>
+              <p className="text-base md:text-lg font-semibold">0</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white rounded-lg shadow-sm p-3 md:p-4">
           <div className="flex items-center">
-            <div className="bg-orange-100 rounded-lg p-2 mr-3">
-              <Calendar className="h-5 w-5 text-orange-600" />
+            <div className="bg-orange-100 rounded-lg p-1.5 md:p-2 mr-2 md:mr-3">
+              <Calendar className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Held</p>
-              <p className="text-lg font-semibold">0</p>
+              <p className="text-xs md:text-sm text-gray-600">Held</p>
+              <p className="text-base md:text-lg font-semibold">0</p>
             </div>
           </div>
         </div>

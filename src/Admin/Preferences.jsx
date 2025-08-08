@@ -87,7 +87,7 @@ const Preferences = () => {
 
   const renderLocaleTab = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Language
@@ -218,7 +218,7 @@ const Preferences = () => {
 
   const renderGeneralTab = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="flex items-center">
           <input 
             type="checkbox" 
@@ -264,16 +264,16 @@ const Preferences = () => {
           Email Signature
         </label>
         <div className="border border-gray-300 rounded-md">
-          <div className="flex items-center space-x-2 p-2 border-b border-gray-300 bg-gray-50">
-            <button className="p-1 hover:bg-gray-200 rounded"><strong>B</strong></button>
-            <button className="p-1 hover:bg-gray-200 rounded"><em>I</em></button>
-            <button className="p-1 hover:bg-gray-200 rounded"><u>U</u></button>
-            <button className="p-1 hover:bg-gray-200 rounded">S</button>
-            <button className="p-1 hover:bg-gray-200 rounded">A</button>
-            <button className="p-1 hover:bg-gray-200 rounded">T</button>
-            <button className="p-1 hover:bg-gray-200 rounded">🔗</button>
-            <button className="p-1 hover:bg-gray-200 rounded">&lt;/&gt;</button>
-            <button className="p-1 hover:bg-gray-200 rounded">✕</button>
+          <div className="flex items-center space-x-2 p-2 border-b border-gray-300 bg-gray-50 overflow-x-auto">
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0"><strong>B</strong></button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0"><em>I</em></button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0"><u>U</u></button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">S</button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">A</button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">T</button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">🔗</button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">&lt;/&gt;</button>
+            <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">✕</button>
           </div>
           <textarea 
             className="w-full h-32 p-3 resize-none focus:outline-none"
@@ -284,7 +284,7 @@ const Preferences = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="flex items-center">
           <input 
             type="checkbox" 
@@ -431,7 +431,7 @@ const Preferences = () => {
 
   const renderUserInterfaceTab = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Theme
@@ -478,7 +478,7 @@ const Preferences = () => {
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
           <label className="block text-sm font-medium text-gray-700">
             Dashboard Layout
           </label>
@@ -495,7 +495,7 @@ const Preferences = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {formData.dashboardLayout.map((item) => (
             <div key={item.id} className="border border-gray-300 rounded-lg p-4 bg-white min-h-48">
               <div className="flex items-center justify-between mb-2">
@@ -575,8 +575,8 @@ const Preferences = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
           <div className="flex items-center space-x-4">
             <button className="p-2 hover:bg-gray-100 rounded">
               <ChevronLeft className="w-5 h-5" />
@@ -587,11 +587,11 @@ const Preferences = () => {
               <span className="text-gray-900">Admin</span>
             </nav>
           </div>
-          <div className="flex space-x-3">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm sm:text-base">
               Save
             </button>
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors">
+            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors text-sm sm:text-base">
               Cancel
             </button>
             <button className="px-2 py-2 text-gray-400 hover:text-gray-600">
@@ -602,17 +602,17 @@ const Preferences = () => {
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="max-w-6xl mx-auto">
           {/* Tabs */}
           <div className="mb-6">
             <div className="border-b border-gray-200">
-              <nav className="flex space-x-8">
+              <nav className="flex space-x-4 sm:space-x-8 overflow-x-auto">
                 {tabs.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                       activeTab === tab
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -626,7 +626,7 @@ const Preferences = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             {activeTab === 'Locale' && renderLocaleTab()}
             {activeTab === 'General' && renderGeneralTab()}
             {activeTab === 'User Interface' && renderUserInterfaceTab()}

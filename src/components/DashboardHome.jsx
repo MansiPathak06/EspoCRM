@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MoreHorizontal,
   Plus,
@@ -6,9 +6,6 @@ import {
   RotateCcw,
   Settings,
   X,
-  Calendar,
-  Phone,
-  CheckSquare,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import DashletOptionsModal from "../pages/DashletOptionsModal";
@@ -18,7 +15,7 @@ const DashboardHome = () => {
   const [streamDropdownOpen, setStreamDropdownOpen] = useState(false);
   const [activitiesDropdownOpen, setActivitiesDropdownOpen] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const [open, setOpen] = useState(false); // for Stream Options modal
+  const [open, setOpen] = useState(false);
 
   const StreamDropdownMenu = () => (
     <div className="absolute right-0 top-8 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-10">
@@ -29,7 +26,6 @@ const DashboardHome = () => {
         <Plus className="w-4 h-4 mr-3" />
         Create Post
       </Link>
-
       <Link
         to="/post"
         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -37,23 +33,20 @@ const DashboardHome = () => {
         <Eye className="w-4 h-4 mr-3" />
         View
       </Link>
-
       <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
         <RotateCcw className="w-4 h-4 mr-3" />
         Refresh
       </button>
-
       <button
         onClick={() => {
           setOpen(true);
-          setStreamDropdownOpen(false); // 👈 this line
+          setStreamDropdownOpen(false);
         }}
         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
       >
         <Settings className="w-4 h-4 mr-3" />
         Options
       </button>
-
       <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
         <X className="w-4 h-4 mr-3" />
         Remove
@@ -70,7 +63,6 @@ const DashboardHome = () => {
         <Plus className="w-4 h-4 mr-3" />
         Create Meeting
       </Link>
-
       <Link
         to="/calls"
         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -78,7 +70,6 @@ const DashboardHome = () => {
         <Plus className="w-4 h-4 mr-3" />
         Create Call
       </Link>
-
       <Link
         to="/task"
         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -86,7 +77,6 @@ const DashboardHome = () => {
         <Plus className="w-4 h-4 mr-3" />
         Create Task
       </Link>
-
       <div className="border-t border-gray-100 my-1"></div>
       <button
         onClick={() => {
@@ -97,18 +87,16 @@ const DashboardHome = () => {
         <RotateCcw className="w-4 h-4 mr-3" />
         Refresh
       </button>
-
       <button
         onClick={() => {
           setShowOptions(true);
-          setActivitiesDropdownOpen(false); // 👈 this line
+          setActivitiesDropdownOpen(false);
         }}
         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
       >
         <Settings className="w-4 h-4 mr-3" />
         Options
       </button>
-
       <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
         <X className="w-4 h-4 mr-3" />
         Remove
@@ -116,8 +104,7 @@ const DashboardHome = () => {
     </div>
   );
 
-  // Close dropdowns when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = () => {
       setStreamDropdownOpen(false);
       setActivitiesDropdownOpen(false);
@@ -130,9 +117,9 @@ const DashboardHome = () => {
   }, [streamDropdownOpen, activitiesDropdownOpen]);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col lg:flex-row gap-6 flex-wrap">
       {/* Stream */}
-      <section className="flex-1 bg-white p-4 rounded-lg shadow border">
+      <section className="w-full lg:flex-1 bg-white p-4 rounded-lg shadow border">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Stream</h2>
           <div className="relative">
@@ -155,7 +142,7 @@ const DashboardHome = () => {
       </section>
 
       {/* My Activities */}
-      <section className="w-1/3 bg-white p-4 rounded-lg shadow border">
+      <section className="w-full lg:w-1/3 bg-white p-4 rounded-lg shadow border">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">My Activities</h2>
           <div className="relative">
@@ -176,11 +163,10 @@ const DashboardHome = () => {
           <p className="text-gray-500 text-sm">No Data</p>
         </div>
       </section>
+
+      {/* Modals */}
       <StreamOptionsModal isOpen={open} onClose={() => setOpen(false)} />
-      <DashletOptionsModal
-        isOpen={showOptions}
-        onClose={() => setShowOptions(false)}
-      />
+      <DashletOptionsModal isOpen={showOptions} onClose={() => setShowOptions(false)} />
     </div>
   );
 };

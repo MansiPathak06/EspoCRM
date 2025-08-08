@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Login from "./components/Login";
 import Layout from "./components/Layout"; // formerly Dashboard.jsx
@@ -32,6 +37,7 @@ import Admin from "./Admin/Admin";
 import Preferences from "./Admin/Preferences";
 import LastViewed from "./Admin/LastViewed";
 import About from "./Admin/About";
+import EntityManager from "./Admin/EntityManager";
 
 const App = () => {
   return (
@@ -54,22 +60,30 @@ const App = () => {
           <Route path="calendar" element={<Calendar />} />
           <Route path="cases" element={<Cases />} />
           <Route path="knowledgebase" element={<KnowledgeBase />} />
-          <Route path="campaigns" element={<Campaigns/>} />
-          <Route path="targetlist" element={<TargetList/>} />
-          <Route path="documents" element={<Documents/>} />
-          <Route path="users" element={<Users/>} />
-          <Route path="teams" element={<Teams/>} />
-          <Route path="workingtimecalendars" element={<WorkingTimeCalendars/>} />
-          <Route path="workingtimeexceptions" element={<WorkingTimeExceptions/>} />
-          <Route path="email-templates" element={<EmailTemplates/>} />
-          <Route path="templates" element={<Templates/>} />
-          <Route path="import" element={<Import/>} />
-          <Route path="DashletOptionsModal" element={<DashletOptionsModal/>} />
-          <Route path="Post" element={<Post/>} />
-          <Route path="admin" element={<Admin/>} />
-          <Route path="preferences" element={<Preferences/>} />
-          <Route path="last-viewed" element={<LastViewed/>} />
-          <Route path="about" element={<About/>} />
+          <Route path="campaigns" element={<Campaigns />} />
+          <Route path="targetlist" element={<TargetList />} />
+          <Route path="documents" element={<Documents />} />
+          <Route path="users" element={<Users />} />
+          <Route path="teams" element={<Teams />} />
+          <Route
+            path="workingtimecalendars"
+            element={<WorkingTimeCalendars />}
+          />
+          <Route
+            path="workingtimeexceptions"
+            element={<WorkingTimeExceptions />}
+          />
+          <Route path="email-templates" element={<EmailTemplates />} />
+          <Route path="templates" element={<Templates />} />
+          <Route path="import" element={<Import />} />
+          <Route path="DashletOptionsModal" element={<DashletOptionsModal />} />
+          <Route path="Post" element={<Post />} />
+          <Route path="admin" element={<Admin />} />
+          <Route path="preferences" element={<Preferences />} />
+          <Route path="last-viewed" element={<LastViewed />} />
+          <Route path="about" element={<About />} />
+          {/* ---------------Admin Routes----------- */}
+           <Route path="entity-manager" element={<EntityManager/>} />
 
         </Route>
 

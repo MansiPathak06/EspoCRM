@@ -10,8 +10,10 @@ import {
   Calendar,
   Info
 } from 'lucide-react';
-import { Link } from "react-router-dom";
-
+// Note: Link component would normally be imported from react-router-dom
+const Link = ({ to, className, children }) => (
+  <a href={to} className={className}>{children}</a>
+);
 
 const Campaigns = () => {
   const [currentView, setCurrentView] = useState('list'); // 'list' or 'create'
@@ -129,10 +131,10 @@ const Campaigns = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+        <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
             <span 
-              className="cursor-pointer hover:text-blue-600"
+              className="cursor-pointer hover:text-blue-600 truncate"
               onClick={() => setCurrentView('list')}
             >
               Campaigns
@@ -140,38 +142,38 @@ const Campaigns = () => {
             <span>›</span>
             <span className="text-gray-900">create</span>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             <button 
               onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               Save
             </button>
             <button 
               onClick={handleCancel}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-auto px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               Cancel
             </button>
-            <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50">
+            <button className="hidden sm:block p-2 border border-gray-300 rounded-md hover:bg-gray-50">
               <MoreHorizontal className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Form */}
-        <div className="max-w-6xl mx-auto p-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="max-w-6xl mx-auto p-3 sm:p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Left Column */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                   />
@@ -191,7 +193,7 @@ const Campaigns = () => {
                   <div className="relative">
                     <input
                       type="number"
-                      className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                       value={formData.budget}
                       onChange={(e) => handleInputChange('budget', e.target.value)}
                       placeholder="0"
@@ -204,19 +206,19 @@ const Campaigns = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                    Target Lists
-                    <Info className="w-4 h-4 text-gray-400 ml-1" />
+                    <span className="truncate">Target Lists</span>
+                    <Info className="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" />
                   </label>
                   <div className="relative">
                     <div className="flex items-center border border-gray-300 rounded-md">
                       <input
                         type="text"
-                        className="flex-1 px-3 py-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="flex-1 px-3 py-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                         value={formData.targetLists}
                         onChange={(e) => handleInputChange('targetLists', e.target.value)}
                         placeholder="Select"
                       />
-                      <ChevronDown className="w-4 h-4 text-gray-500 mx-2" />
+                      <ChevronDown className="w-4 h-4 text-gray-500 mx-2 flex-shrink-0" />
                     </div>
                   </div>
                 </div>
@@ -224,7 +226,7 @@ const Campaigns = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                   <textarea
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24 resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-20 sm:h-24 resize-none text-sm sm:text-base"
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
                   />
@@ -232,7 +234,7 @@ const Campaigns = () => {
               </div>
 
               {/* Right Column */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
                   <DropdownField
@@ -269,7 +271,7 @@ const Campaigns = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Teams</label>
                   <div className="relative">
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base">
                       <option value="">Select</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
@@ -278,19 +280,19 @@ const Campaigns = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                    Excluding Target Lists
-                    <Info className="w-4 h-4 text-gray-400 ml-1" />
+                    <span className="truncate">Excluding Target Lists</span>
+                    <Info className="w-4 h-4 text-gray-400 ml-1 flex-shrink-0" />
                   </label>
                   <div className="relative">
                     <div className="flex items-center border border-gray-300 rounded-md">
                       <input
                         type="text"
-                        className="flex-1 px-3 py-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="flex-1 px-3 py-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                         value={formData.excludingTargetLists}
                         onChange={(e) => handleInputChange('excludingTargetLists', e.target.value)}
                         placeholder="Select"
                       />
-                      <ChevronDown className="w-4 h-4 text-gray-500 mx-2" />
+                      <ChevronDown className="w-4 h-4 text-gray-500 mx-2 flex-shrink-0" />
                     </div>
                   </div>
                 </div>
@@ -305,25 +307,25 @@ const Campaigns = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Campaigns</h1>
-          <div className="flex items-center space-x-3">
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Campaigns</h1>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
             <button 
               onClick={() => setCurrentView('create')}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               <Plus className="w-4 h-4" />
-              <span>Create Campaign</span>
+              <span className="hidden sm:inline">Create Campaign</span>
+              <span className="sm:hidden">Create</span>
             </button>
             <Link
-  to="/targetlist"
-  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 inline-block text-center"
->
-  Target Lists
-</Link>
-
-            <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50">
+              to="/targetlist"
+              className="px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-sm sm:text-base"
+            >
+              Target Lists
+            </Link>
+            <button className="hidden sm:block p-2 border border-gray-300 rounded-md hover:bg-gray-50">
               <MoreHorizontal className="w-4 h-4 text-gray-500" />
             </button>
           </div>
@@ -331,11 +333,11 @@ const Campaigns = () => {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between space-y-3 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="relative">
-              <select className="pl-3 pr-8 py-2 border border-gray-300 rounded-md appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <select className="w-full sm:w-auto pl-3 pr-8 py-2 border border-gray-300 rounded-md appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base">
                 <option>All</option>
                 <option>Planning</option>
                 <option>Active</option>
@@ -348,12 +350,12 @@ const Campaigns = () => {
               <input
                 type="text"
                 placeholder=""
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
+                className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-end">
             <button className="p-2 hover:bg-gray-100 rounded-md">
               <MoreHorizontal className="w-4 h-4 text-gray-500" />
             </button>
@@ -362,35 +364,81 @@ const Campaigns = () => {
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         {campaigns.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
             <div className="text-center text-gray-500">
-              <p className="text-lg">No Data</p>
+              <p className="text-base sm:text-lg">No Data</p>
             </div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="block sm:hidden">
+              {campaigns.map((campaign) => (
+                <div key={campaign.id} className="border-b border-gray-200 last:border-b-0 p-4 hover:bg-gray-50">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <h3 className="font-medium text-gray-900 text-sm">{campaign.name}</h3>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        campaign.status === 'Active' ? 'bg-green-100 text-green-800' :
+                        campaign.status === 'Planning' ? 'bg-blue-100 text-blue-800' :
+                        campaign.status === 'Complete' ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {campaign.status}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Type:</span>
+                        <span>{campaign.type}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Budget:</span>
+                        <span>{campaign.budget ? `$${campaign.budget}` : '-'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Start Date:</span>
+                        <span>{campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : '-'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>End Date:</span>
+                        <span>{campaign.endDate ? new Date(campaign.endDate).toLocaleDateString() : '-'}</span>
+                      </div>
+                      {campaign.assignedUser && (
+                        <div className="flex justify-between">
+                          <span>Assigned:</span>
+                          <span className="truncate max-w-24">{campaign.assignedUser}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Budget</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned User</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Start Date</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">End Date</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Budget</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Assigned User</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {campaigns.map((campaign) => (
                     <tr key={campaign.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {campaign.name}
+                      <td className="px-4 sm:px-6 py-4 text-sm font-medium text-gray-900">
+                        <div className="truncate max-w-32 sm:max-w-48">{campaign.name}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           campaign.status === 'Active' ? 'bg-green-100 text-green-800' :
                           campaign.status === 'Planning' ? 'bg-blue-100 text-blue-800' :
@@ -400,17 +448,19 @@ const Campaigns = () => {
                           {campaign.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{campaign.type}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">{campaign.type}</td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                         {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                         {campaign.endDate ? new Date(campaign.endDate).toLocaleDateString() : '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
                         {campaign.budget ? `$${campaign.budget}` : '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{campaign.assignedUser}</td>
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 hidden xl:table-cell">
+                        <div className="truncate max-w-32">{campaign.assignedUser || '-'}</div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -421,9 +471,9 @@ const Campaigns = () => {
       </div>
 
       {/* Pagination */}
-      <div className="bg-white border-t border-gray-200 px-6 py-4">
+      <div className="bg-white border-t border-gray-200 px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+          <div className="text-xs sm:text-sm text-gray-500">
             {campaigns.length === 0 ? '0 / 0' : `1 / ${campaigns.length}`}
           </div>
           <div className="flex items-center space-x-2">

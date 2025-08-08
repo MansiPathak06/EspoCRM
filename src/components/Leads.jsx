@@ -6,12 +6,14 @@ import {
   Bell,
   MoreHorizontal,
   ChevronDown,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 
 const Leads = () => {
   const [currentView, setCurrentView] = useState('list'); // 'list' or 'create'
   const [leads, setLeads] = useState([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     salutation: '',
     firstName: '',
@@ -111,11 +113,11 @@ const Leads = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <UserPlus className="w-6 h-6 text-blue-600 mr-2" />
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
               Leads
               {currentView === 'create' && (
                 <>
@@ -125,8 +127,9 @@ const Leads = () => {
               )}
             </h1>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Desktop search */}
+            <div className="relative hidden md:block">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -134,37 +137,74 @@ const Leads = () => {
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
               />
             </div>
-            <button className="p-2 text-gray-400 hover:text-gray-600">
-              <Plus className="w-5 h-5" />
+            {/* Mobile menu button */}
+            <button 
+              className="md:hidden p-2 text-gray-400 hover:text-gray-600"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <Menu className="w-5 h-5" />
             </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600">
-              <Bell className="w-5 h-5" />
-            </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600">
-              <MoreHorizontal className="w-5 h-5" />
-            </button>
+            {/* Desktop action buttons */}
+            <div className="hidden md:flex items-center space-x-4">
+              <button className="p-2 text-gray-400 hover:text-gray-600">
+                <Plus className="w-5 h-5" />
+              </button>
+              <button className="p-2 text-gray-400 hover:text-gray-600">
+                <Bell className="w-5 h-5" />
+              </button>
+              <button className="p-2 text-gray-400 hover:text-gray-600">
+                <MoreHorizontal className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
+        
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pt-4 border-t border-gray-200">
+            <div className="space-y-3">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+              <div className="flex justify-center space-x-4">
+                <button className="p-2 text-gray-400 hover:text-gray-600">
+                  <Plus className="w-5 h-5" />
+                </button>
+                <button className="p-2 text-gray-400 hover:text-gray-600">
+                  <Bell className="w-5 h-5" />
+                </button>
+                <button className="p-2 text-gray-400 hover:text-gray-600">
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Content Area */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {currentView === 'list' ? (
           // Leads List View
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                 <div className="relative">
                   <select className="appearance-none bg-white border border-gray-300 rounded px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option>All</option>
                   </select>
                   <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
-                <div className="relative">
+                <div className="relative w-full sm:w-80">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-80"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <button className="p-2 text-gray-400 hover:text-gray-600">
@@ -173,7 +213,7 @@ const Leads = () => {
               </div>
               <button
                 onClick={() => setCurrentView('create')}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
+                className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center justify-center"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Lead
@@ -187,42 +227,67 @@ const Leads = () => {
               </div>
             ) : (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <table className="min-w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Account Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Phone
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {lead.fullName}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {lead.accountName}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {lead.email}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {lead.mobile || lead.phone}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Account Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Email
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Phone
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {leads.map((lead) => (
+                        <tr key={lead.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {lead.fullName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {lead.accountName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {lead.email}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {lead.mobile || lead.phone}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              lead.status === 'New' ? 'bg-blue-100 text-blue-800' :
+                              lead.status === 'Assigned' ? 'bg-yellow-100 text-yellow-800' :
+                              lead.status === 'In Process' ? 'bg-orange-100 text-orange-800' :
+                              lead.status === 'Converted' ? 'bg-green-100 text-green-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {lead.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden">
+                  {leads.map((lead) => (
+                    <div key={lead.id} className="p-4 border-b border-gray-200 last:border-b-0">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium text-gray-900">{lead.fullName}</div>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             lead.status === 'New' ? 'bg-blue-100 text-blue-800' :
                             lead.status === 'Assigned' ? 'bg-yellow-100 text-yellow-800' :
@@ -232,11 +297,26 @@ const Leads = () => {
                           }`}>
                             {lead.status}
                           </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                        {lead.accountName && (
+                          <div className="text-sm text-gray-500">
+                            <span className="font-medium">Account:</span> {lead.accountName}
+                          </div>
+                        )}
+                        {lead.email && (
+                          <div className="text-sm text-gray-500">
+                            <span className="font-medium">Email:</span> {lead.email}
+                          </div>
+                        )}
+                        {(lead.mobile || lead.phone) && (
+                          <div className="text-sm text-gray-500">
+                            <span className="font-medium">Phone:</span> {lead.mobile || lead.phone}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -256,26 +336,28 @@ const Leads = () => {
           </div>
         ) : (
           // Create Lead Form
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-start mb-6 space-x-3">
-              <button
-                onClick={handleSave}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                className="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
-              >
-                Cancel
-              </button>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start mb-6 space-y-3 sm:space-y-0 sm:space-x-3">
+              <div className="flex w-full sm:w-auto space-x-3">
+                <button
+                  onClick={handleSave}
+                  className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="flex-1 sm:flex-none bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+              </div>
               <button className="text-gray-400 hover:text-gray-600">
                 <MoreHorizontal className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Overview */}
               <div className="space-y-4">
                 <div className="text-lg font-medium text-gray-700 mb-4">Overview</div>
@@ -284,12 +366,12 @@ const Leads = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                     <select
                       name="salutation"
                       value={formData.salutation}
                       onChange={handleInputChange}
-                      className="w-16 border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full sm:w-16 border border-gray-300 rounded px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     >
                       <option value="">-</option>
                       <option value="Mr.">Mr.</option>
@@ -349,29 +431,31 @@ const Leads = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <div className="flex">
-                    <select className="w-20 border border-gray-300 rounded-l px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
-                      <option>Mobile</option>
-                      <option>Work</option>
-                      <option>Home</option>
-                    </select>
-                    <div className="flex items-center border border-l-0 border-gray-300 px-2 bg-gray-50 text-sm">
-                      +1
+                  <div className="flex flex-col sm:flex-row">
+                    <div className="flex w-full">
+                      <select className="w-20 sm:w-20 border border-gray-300 rounded-l px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                        <option>Mobile</option>
+                        <option>Work</option>
+                        <option>Home</option>
+                      </select>
+                      <div className="flex items-center border border-l-0 border-gray-300 px-2 bg-gray-50 text-sm">
+                        +1
+                      </div>
+                      <input
+                        type="tel"
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleInputChange}
+                        placeholder="000-000-0000"
+                        className="flex-1 border border-l-0 border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button className="px-3 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-400 text-sm">
+                        📞
+                      </button>
+                      <button className="px-3 py-2 border border-l-0 border-gray-300 rounded-r bg-gray-50 text-gray-400 text-sm">
+                        ℹ️
+                      </button>
                     </div>
-                    <input
-                      type="tel"
-                      name="mobile"
-                      value={formData.mobile}
-                      onChange={handleInputChange}
-                      placeholder="000-000-0000"
-                      className="flex-1 border border-l-0 border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button className="px-3 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-400 text-sm">
-                      📞
-                    </button>
-                    <button className="px-3 py-2 border border-l-0 border-gray-300 rounded-r bg-gray-50 text-gray-400 text-sm">
-                      ℹ️
-                    </button>
                   </div>
                   <button className="mt-2 text-blue-600 text-sm hover:text-blue-700">+</button>
                 </div>
@@ -409,7 +493,7 @@ const Leads = () => {
                       placeholder="Street"
                       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <input
                         type="text"
                         name="city"
@@ -559,6 +643,8 @@ const Leads = () => {
 
               {/* Right Column - Assignment */}
               <div className="space-y-4">
+                <div className="text-lg font-medium text-gray-700 mb-4 lg:block hidden">Assignment</div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Assigned User</label>
                   <div className="flex">

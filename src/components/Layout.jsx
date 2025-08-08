@@ -19,9 +19,28 @@ import {
   FaPlus,
   FaBell,
   FaCalendar,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 const Layout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(false); // Close mobile sidebar on desktop
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (moreMenuRef.current && !moreMenuRef.current.contains(event.target)) {
@@ -98,15 +117,43 @@ const createMenuRef = useRef(null);
 const [showUserMenu, setShowUserMenu] = useState(false);
 const userMenuRef = useRef(null);
 
+// Close sidebar when clicking on mobile overlay
+const closeSidebar = () => {
+  setIsSidebarOpen(false);
+};
+
 
 
   return (
     <div className="flex h-screen bg-gray-100">
+      {/* Mobile overlay */}
+      {isMobile && isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col">
+      <aside className={`
+        ${isMobile ? 'fixed' : 'relative'} 
+        ${isMobile && !isSidebarOpen ? '-translate-x-full' : 'translate-x-0'}
+        w-64 bg-white border-r border-gray-200 p-4 flex flex-col h-full z-50 transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:static
+      `}>
+        {/* Mobile close button */}
+        {isMobile && (
+          <button
+            onClick={closeSidebar}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 lg:hidden"
+          >
+            <FaTimes size={20} />
+          </button>
+        )}
+
         <img src={logo} alt="EspoCRM Logo" className="w-30 mx-auto mt-4" />
 
-        <nav className="space-y-6 mt-6">
+        <nav className="space-y-6 mt-6 flex-1 overflow-y-auto">
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase mb-2">
               CRM
@@ -116,6 +163,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/dashboard"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaHome /> Home
                 </Link>
@@ -124,6 +172,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/accounts"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaUserTie /> Accounts
                 </Link>
@@ -132,6 +181,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/contact"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaAddressBook /> Contacts
                 </Link>
@@ -140,6 +190,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/leads"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaUserPlus /> Leads
                 </Link>
@@ -148,6 +199,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/opportunity"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaDollarSign /> Opportunities
                 </Link>
@@ -164,6 +216,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/email"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaEnvelope /> Emails
                 </Link>
@@ -172,6 +225,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/meetings"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaCalendarAlt /> Meetings
                 </Link>
@@ -180,6 +234,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/calls"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaPhone /> Calls
                 </Link>
@@ -188,6 +243,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/task"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaTasks /> Tasks
                 </Link>
@@ -196,6 +252,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/calendar"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaCalendar /> Calendar
                 </Link>
@@ -212,6 +269,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/cases"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaSuitcase /> Cases
                 </Link>
@@ -220,6 +278,7 @@ const userMenuRef = useRef(null);
                 <Link
                   to="/knowledgebase"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaBook /> Knowledge Base
                 </Link>
@@ -239,7 +298,7 @@ const userMenuRef = useRef(null);
             </button>
 
             {showMoreMenu && (
-              <div className="absolute bottom-10 left-0 w-72 bg-white border rounded-lg shadow-lg p-4 z-50">
+              <div className="absolute bottom-10 left-0 w-72 bg-white border rounded-lg shadow-lg p-4 z-50 max-h-96 overflow-y-auto">
                 <div className="mb-3">
                   <h4 className="text-xs uppercase text-gray-500 font-bold mb-1">
                     Marketing
@@ -249,7 +308,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/campaigns"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)} // closes menu on click
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Campaigns
                       </Link>
@@ -259,7 +321,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/targetlist"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Target Lists
                       </Link>
@@ -275,7 +340,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/documents"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Documents
                       </Link>
@@ -291,7 +359,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/users"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Users
                       </Link>
@@ -301,7 +372,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/teams"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Teams
                       </Link>
@@ -311,7 +385,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/workingtimecalendars"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Working Time Calendars
                       </Link>
@@ -324,7 +401,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/email-templates"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Email Templates
                       </Link>
@@ -334,7 +414,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/templates"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Templates
                       </Link>
@@ -344,7 +427,10 @@ const userMenuRef = useRef(null);
                       <Link
                         to="/import"
                         className="hover:text-blue-600 cursor-pointer block"
-                        onClick={() => setShowMoreMenu(false)}
+                        onClick={() => {
+                          setShowMoreMenu(false);
+                          if (isMobile) closeSidebar();
+                        }}
                       >
                         Import
                       </Link>
@@ -358,64 +444,74 @@ const userMenuRef = useRef(null);
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 min-w-0">
         {/* Topbar */}
-        <header className="bg-white px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-  <div className="flex items-center gap-2 w-1/2 relative">
-    <FaSearch className="text-gray-400" />
-    <input
-      type="text"
-      placeholder="Search"
-      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-    />
-
-    {/* 3-dot dropdown beside Search */}
-    <div className="relative ml-2" ref={filterMenuRef}>
-      <button onClick={() => setShowFilterMenu(!showFilterMenu)}>
-        <span className="text-xl text-gray-600 hover:text-blue-600">⋮</span>
-      </button>
-
-      {showFilterMenu && (
-        <div className="absolute right-0 top-8 w-56 bg-white border rounded shadow-md z-50">
-          <div className="text-sm font-semibold px-4 py-2 text-gray-600 border-b">Add Field</div>
-          <ul className="text-sm text-gray-700 max-h-64 overflow-y-auto">
-            {[
-              "Assigned User",
-              "Teams",
-              "Created At",
-              "Created By",
-              "Modified At",
-              "Stream Updated At",
-              "Type",
-              "Industry",
-              "Description",
-              "Email",
-              "Phone",
-              "Target Lists",
-              "Country",
-              "Billing Address",
-              "Shipping Address",
-              "Website",
-              "Campaign",
-            ].map((item, idx) => (
-              <li
-                key={idx}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  // Optional: apply filter
-                  setShowFilterMenu(false);
-                }}
+        <header className="bg-white px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <div className="flex items-center gap-2 flex-1 lg:w-1/2 lg:flex-initial relative">
+            {/* Mobile hamburger menu */}
+            {isMobile && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="text-gray-500 hover:text-gray-700 mr-2 lg:hidden"
               >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  </div>
+                <FaBars size={20} />
+              </button>
+            )}
+            
+            <FaSearch className="text-gray-400 flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search"
+              className="flex-1 min-w-0 px-2 py-1 border border-gray-300 rounded-md text-sm"
+            />
 
-          <div className="flex items-center gap-4 text-gray-500 text-lg">
+            {/* 3-dot dropdown beside Search */}
+            <div className="relative ml-2" ref={filterMenuRef}>
+              <button onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                <span className="text-xl text-gray-600 hover:text-blue-600">⋮</span>
+              </button>
+
+              {showFilterMenu && (
+                <div className="absolute right-0 top-8 w-56 bg-white border rounded shadow-md z-50">
+                  <div className="text-sm font-semibold px-4 py-2 text-gray-600 border-b">Add Field</div>
+                  <ul className="text-sm text-gray-700 max-h-64 overflow-y-auto">
+                    {[
+                      "Assigned User",
+                      "Teams",
+                      "Created At",
+                      "Created By",
+                      "Modified At",
+                      "Stream Updated At",
+                      "Type",
+                      "Industry",
+                      "Description",
+                      "Email",
+                      "Phone",
+                      "Target Lists",
+                      "Country",
+                      "Billing Address",
+                      "Shipping Address",
+                      "Website",
+                      "Campaign",
+                    ].map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          // Optional: apply filter
+                          setShowFilterMenu(false);
+                        }}
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 sm:gap-4 text-gray-500 text-lg">
            <div className="relative" ref={createMenuRef}>
   <FaPlus
     className="cursor-pointer hover:text-blue-600"
@@ -459,7 +555,7 @@ const userMenuRef = useRef(null);
   <img
     src="https://ui-avatars.com/api/?name=AD&background=0D8ABC&color=fff"
     alt="User Avatar"
-    className="w-8 h-8 rounded-full cursor-pointer"
+    className="w-8 h-8 rounded-full cursor-pointer flex-shrink-0"
     onClick={() => setShowUserMenu(!showUserMenu)}
   />
 
@@ -515,7 +611,7 @@ const userMenuRef = useRef(null);
         </header>
 
         {/* Nested Routes */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>

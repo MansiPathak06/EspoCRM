@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, ChevronDown, MoreHorizontal, Edit, Eye, X } from 'lucide-react';
+import { Search, Plus, ChevronDown, MoreHorizontal, Edit, Eye, X, Menu } from 'lucide-react';
 
 const Users = () => {
   const [users, setUsers] = useState([
@@ -23,6 +23,7 @@ const Users = () => {
   const [modalMode, setModalMode] = useState('create'); // 'create', 'view', 'edit'
   const [currentUser, setCurrentUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showMobileMenu, setShowMobileMenu] = useState({});
   const [formData, setFormData] = useState({
     userName: '',
     firstName: '',
@@ -75,6 +76,7 @@ const Users = () => {
     setCurrentUser(user);
     setFormData({ ...user });
     setShowModal(true);
+    setShowMobileMenu({});
   };
 
   const handleEditUser = (user) => {
@@ -82,6 +84,7 @@ const Users = () => {
     setCurrentUser(user);
     setFormData({ ...user });
     setShowModal(true);
+    setShowMobileMenu({});
   };
 
   const handleSave = () => {
@@ -115,6 +118,13 @@ const Users = () => {
     setFormData(prev => ({ ...prev, password, confirmPassword: password }));
   };
 
+  const toggleMobileMenu = (userId) => {
+    setShowMobileMenu(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
+
   const filteredUsers = users.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.userName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -123,24 +133,25 @@ const Users = () => {
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-4">
+      <div className="border-b border-gray-200 px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Users</h1>
           <button
             onClick={handleCreateUser}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md flex items-center gap-2 text-sm"
           >
             <Plus size={16} />
-            Create User
+            <span className="hidden xs:inline">Create User</span>
+            <span className="xs:hidden">Create</span>
           </button>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="px-6 py-4">
-        <div className="flex items-center gap-4">
+      <div className="px-4 sm:px-6 py-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <div className="relative">
-            <select className="bg-white border border-gray-300 rounded-md px-3 py-2 pr-8 text-sm appearance-none">
+            <select className="bg-white border border-gray-300 rounded-md px-3 py-2 pr-8 text-sm appearance-none w-full sm:w-auto">
               <option>All</option>
             </select>
             <ChevronDown className="absolute right-2 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -155,17 +166,19 @@ const Users = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <button className="p-2 text-gray-400 hover:text-gray-600">
-            <Search size={16} />
-          </button>
-          <button className="p-2 text-gray-400 hover:text-gray-600">
-            <MoreHorizontal size={16} />
-          </button>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button className="p-2 text-gray-400 hover:text-gray-600 sm:hidden">
+              <Search size={16} />
+            </button>
+            <button className="p-2 text-gray-400 hover:text-gray-600">
+              <MoreHorizontal size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="px-6">
+      {/* Users Table - Desktop */}
+      <div className="px-4 sm:px-6 hidden md:block">
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
             <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-500 uppercase">
@@ -237,6 +250,87 @@ const Users = () => {
         </div>
       </div>
 
+      {/* Users Cards - Mobile/Tablet */}
+      <div className="px-4 sm:px-6 md:hidden">
+        <div className="space-y-4">
+          {filteredUsers.map((user) => (
+            <div key={user.id} className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
+                    {user.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm font-medium text-gray-900 truncate">{user.name}</h3>
+                    <p className="text-xs text-gray-500 truncate">@{user.userName}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {user.isActive && (
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  )}
+                  <button
+                    onClick={() => toggleMobileMenu(user.id)}
+                    className="p-1 text-gray-400 hover:text-gray-600"
+                  >
+                    <Menu size={16} />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="mt-3 space-y-1">
+                {user.title && (
+                  <p className="text-xs text-gray-600">
+                    <span className="font-medium">Title:</span> {user.title}
+                  </p>
+                )}
+                {user.email && (
+                  <p className="text-xs text-gray-600 truncate">
+                    <span className="font-medium">Email:</span> {user.email}
+                  </p>
+                )}
+                <p className="text-xs text-gray-600">
+                  <span className="font-medium">Type:</span> {user.type}
+                </p>
+              </div>
+
+              {/* Mobile Menu */}
+              {showMobileMenu[user.id] && (
+                <div className="mt-3 pt-3 border-t border-gray-200 flex gap-2">
+                  <button
+                    onClick={() => handleViewUser(user)}
+                    className="flex-1 px-3 py-2 text-xs bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center justify-center gap-1"
+                  >
+                    <Eye size={12} />
+                    View
+                  </button>
+                  <button
+                    onClick={() => handleEditUser(user)}
+                    className="flex-1 px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 flex items-center justify-center gap-1"
+                  >
+                    <Edit size={12} />
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile Pagination */}
+        <div className="flex items-center justify-between py-4">
+          <span className="text-sm text-gray-500">1-1 / 1</span>
+          <div className="flex items-center gap-2">
+            <button className="p-1 text-gray-400">
+              <ChevronDown className="rotate-90" size={16} />
+            </button>
+            <button className="p-1 text-gray-400">
+              <ChevronDown className="-rotate-90" size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -259,12 +353,12 @@ const Users = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6">
-              <div className="grid grid-cols-3 gap-6">
+            <div className="p-4 sm:p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column */}
-                <div className="col-span-2 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="sm:col-span-1">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         User Name <span className="text-red-500">*</span>
                       </label>
@@ -278,12 +372,12 @@ const Users = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Name <span className="text-red-500">*</span>
                       </label>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                         <input
                           type="text"
                           placeholder="First Name"
@@ -316,7 +410,7 @@ const Users = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Email
@@ -333,7 +427,7 @@ const Users = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Phone
                       </label>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                         <input
                           type="text"
                           placeholder="Mobile"
@@ -356,8 +450,8 @@ const Users = () => {
 
                   {/* Teams and Access Control */}
                   <div className="border-t pt-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Teams and Access Control</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">Teams and Access Control</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Type
@@ -391,13 +485,13 @@ const Users = () => {
                   {/* Password Section */}
                   {modalMode !== 'view' && (
                     <div className="border-t pt-4">
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Password</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">Password</h3>
+                      <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Password
                           </label>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col xs:flex-row gap-2">
                             <input
                               type="password"
                               value={formData.password}
@@ -406,7 +500,7 @@ const Users = () => {
                             />
                             <button
                               onClick={generatePassword}
-                              className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm hover:bg-gray-200"
+                              className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm hover:bg-gray-200 whitespace-nowrap"
                             >
                               Generate
                             </button>
@@ -432,12 +526,12 @@ const Users = () => {
                 </div>
 
                 {/* Right Column - Avatar */}
-                <div>
+                <div className="lg:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Avatar
                   </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-2"></div>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-8 text-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full mx-auto mb-2"></div>
                     {modalMode !== 'view' && (
                       <button className="text-sm text-blue-600 hover:text-blue-700">
                         Upload
@@ -450,18 +544,18 @@ const Users = () => {
 
             {/* Modal Footer */}
             {modalMode !== 'view' && (
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-6 py-4 border-t border-gray-200 bg-gray-50 space-y-2 sm:space-y-0">
                 <div></div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
                   <button
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 text-center"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-center"
                   >
                     Save
                   </button>
@@ -473,6 +567,6 @@ const Users = () => {
       )}
     </div>
   );
-};
 
+};
 export default Users;
