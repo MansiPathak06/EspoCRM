@@ -24,6 +24,13 @@ const EntityManager = () => {
       label: entityLabel, 
       icon: entityIcon 
     });
+
+    
+
+  const handleAdminClick = () => {
+    navigate('/admin');
+  };
+
     
     // Route to specific entity manager
     const routePath = `/admin/${entityName.toLowerCase()}/${entityName}EntityManager`;
@@ -752,7 +759,13 @@ const EntityManager = () => {
         <div className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <nav className="text-sm text-gray-500">
-              <span className="text-blue-600 cursor-pointer hover:underline">Administration</span>
+               <button 
+      onClick={handleAdminClick}
+      className="text-blue-500 hover:text-blue-700 hover:underline"
+    >
+      Administration
+    </button>
+          
               <span className="mx-2">›</span>
               <span className="text-blue-600 cursor-pointer hover:underline">Entity Manager</span>
               <span className="mx-2">›</span>

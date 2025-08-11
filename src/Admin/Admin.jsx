@@ -175,19 +175,19 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Users", 
           icon: <Users className="w-4 h-4" />, 
-          route: "/admin/users/list",
+          route: "/components/users",
           description: "Users management."
         },
         { 
           name: "Teams", 
           icon: <UserPlus className="w-4 h-4" />, 
-          route: "/admin/users/teams",
+          route: "/components/teams",
           description: "Teams management."
         },
         { 
           name: "Roles", 
           icon: <UserCog className="w-4 h-4" />, 
-          route: "/admin/users/roles",
+          route: "/admin/users/role",
           description: "Roles management."
         },
         { 
@@ -310,7 +310,7 @@ const Admin = ({ onNavigate }) => {
         { 
           name: "Portals", 
           icon: <Globe className="w-4 h-4" />, 
-          route: "/portal/portals",
+          route: "/portal/portal",
           description: "Portals management."
         },
         { 

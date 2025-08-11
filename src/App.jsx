@@ -40,6 +40,21 @@ import About from "./Admin/About";
 import EntityManager from "./Admin/EntityManager";
 import LayoutManager from "./Admin/LayoutManager";
 import AccountEntityManager from "./Admin/Account/AccountEntityManager";
+import LabelManager from "./Admin/LabelManager";
+import TemplateManager from "./Admin/TemplateManager";
+import Portal from "./Admin/Portal/Portal";
+import PortalUsers from "./Admin/Portal/PortalUsers";
+import PortalRoles from "./Admin/Portal/PortalRoles";
+import Role from "./Admin/Users/Role";
+import AuthLog from "./Admin/Users/authLog";
+import AuthTokens from "./Admin/Users/AuthTokens";
+import ActionHistory from "./Admin/Users/ActionHistory";
+import APIUsers from "./Admin/Users/APIUsers";
+import OutboundEmails from "./Admin/Messaging/OutboundEmails";
+import InboundEmails from "./Admin/Messaging/InboundEmails";
+import GroupEmailAccounts from "./Admin/Messaging/GroupEmailAccounts";
+import PersonalEmailAccounts from "./Admin/Messaging/PersonalEmailAccounts";
+import EmailFilters from "./Admin/Messaging/EmailFilters";
 
 const App = () => {
   return (
@@ -91,8 +106,28 @@ const App = () => {
           {/* ---------------Admin Routes----------- */}
            <Route path="/customization/entity-manager" element={<EntityManager/>} />
            <Route path="/customization/layout-manager" element={<LayoutManager/>} />
+           <Route path="/customization/label-manager" element={<LabelManager/>} />
+           <Route path="/customization/template-manager" element={<TemplateManager/>} />
+           <Route path="/customization/template-manager" element={<TemplateManager/>} />
            <Route path="/admin/account/AccountEntityManager" element={<AccountEntityManager/>} />
 
+
+           <Route path="/portal/portal" element={<Portal/>} />
+           <Route path="/portal/users" element={<PortalUsers/>} />
+           <Route path="/portal/roles" element={<PortalRoles/>} />
+           <Route path="/components/users" element={<Users/>}/>
+           <Route path="/components/teams" element={<Teams/>}/>
+           <Route path="/admin/users/role" element={<Role/>}/>
+           <Route path="/admin/users/auth-log" element={<AuthLog/>}/>
+           <Route path="/admin/users/auth-tokens" element={<AuthTokens/>}/>
+           <Route path="/admin/users/action-history" element={<ActionHistory/>}/>
+           <Route path="/admin/users/api-users" element={<APIUsers/>}/>
+          <Route path="/messaging/outbound-emails" element={<OutboundEmails/>}/>
+          <Route path="/messaging/inbound-emails" element={<InboundEmails/>}/>
+          <Route path="/messaging/group-email-accounts" element={<GroupEmailAccounts/>}/>
+          <Route path="/messaging/personal-email-accounts" element={<PersonalEmailAccounts/>}/>
+          <Route path="/messaging/email-filters" element={<EmailFilters/>}/>
+          
         </Route>
 
         {/* Redirect root to login */}
