@@ -55,6 +55,13 @@ import InboundEmails from "./Admin/Messaging/InboundEmails";
 import GroupEmailAccounts from "./Admin/Messaging/GroupEmailAccounts";
 import PersonalEmailAccounts from "./Admin/Messaging/PersonalEmailAccounts";
 import EmailFilters from "./Admin/Messaging/EmailFilters";
+import GroupEmailFolders from "./Admin/Messaging/GroupEmailFolders";
+import SMS from "./Admin/Messaging/SMS";
+import Settings from "./Admin/System/Settings";
+import UserInterface from "./Admin/System/UserInterface";
+import Authentication from "./Admin/System/Authentication";
+import Currency from "./Admin/System/Currency";
+import Notifications from "./Admin/System/Notifications";
 
 const App = () => {
   return (
@@ -127,6 +134,15 @@ const App = () => {
           <Route path="/messaging/group-email-accounts" element={<GroupEmailAccounts/>}/>
           <Route path="/messaging/personal-email-accounts" element={<PersonalEmailAccounts/>}/>
           <Route path="/messaging/email-filters" element={<EmailFilters/>}/>
+          <Route path="/messaging/email-filters" element={<EmailFilters/>}/>
+          <Route path="/messaging/group-email-folders" element={<GroupEmailFolders/>}/>
+          <Route path="/messaging/email-templates" element={<EmailTemplates/>}/>
+          <Route path="/messaging/sms" element={<SMS/>}/>
+          <Route path="/admin/system/settings" element={<Settings/>}/>
+          <Route path="/admin/system/user-interface" element={<UserInterface/>}/>
+          <Route path="/admin/system/authentication" element={<Authentication/>}/>
+          <Route path="/admin/system/currency" element={<Currency/>}/>
+          <Route path="/admin/system/notifications" element={<Notifications/>}/>
           
         </Route>
 
