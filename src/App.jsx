@@ -46,7 +46,7 @@ import Portal from "./Admin/Portal/Portal";
 import PortalUsers from "./Admin/Portal/PortalUsers";
 import PortalRoles from "./Admin/Portal/PortalRoles";
 import Role from "./Admin/Users/Role";
-import AuthLog from "./Admin/Users/authLog";
+import AuthLog from "./Admin/Users/AuthLog";
 import AuthTokens from "./Admin/Users/AuthTokens";
 import ActionHistory from "./Admin/Users/ActionHistory";
 import APIUsers from "./Admin/Users/APIUsers";
