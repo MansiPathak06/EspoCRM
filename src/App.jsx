@@ -62,6 +62,15 @@ import UserInterface from "./Admin/System/UserInterface";
 import Authentication from "./Admin/System/Authentication";
 import Currency from "./Admin/System/Currency";
 import Notifications from "./Admin/System/Notifications";
+import LayoutSet from "./Admin/Setup/LayoutSet";
+import DashboardTemplate from "./Admin/Setup/DashboardTemplate";
+import LeadCapture from "./Admin/Setup/LeadCapture";
+import Template from "./Admin/Setup/Template";
+import Webhook from "./Admin/Setup/Webhook";
+import AddressCountry from "./Admin/Setup/AddressCountry";
+import AuthenticationProvider from "./Admin/Setup/AuthenticationProvider";
+import Attachments from "./Admin/Data/Attachments";
+
 
 const App = () => {
   return (
@@ -143,6 +152,16 @@ const App = () => {
           <Route path="/admin/system/authentication" element={<Authentication/>}/>
           <Route path="/admin/system/currency" element={<Currency/>}/>
           <Route path="/admin/system/notifications" element={<Notifications/>}/>
+          <Route path="/setup/working-time-calendars" element={<WorkingTimeCalendars/>}/>
+          <Route path="/setup/layout-sets" element={<LayoutSet/>}/>
+          <Route path="/setup/dashboard-templates" element={<DashboardTemplate/>}/>
+          <Route path="/setup/lead-capture" element={<LeadCapture/>}/>
+          <Route path="/setup/pdf-templates" element={<Template/>}/>
+          <Route path="/setup/webhooks" element={<Webhook/>}/>
+          <Route path="/setup/address-countries" element={<AddressCountry/>}/>
+          <Route path="/setup/authentication-providers" element={<AuthenticationProvider/>}/>
+          <Route path="/data/import" element={<Import/>}/>
+          <Route path="/data/attachments" element={<Attachments/>}/>
           
         </Route>
 
