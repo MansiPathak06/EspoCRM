@@ -9,7 +9,6 @@ import {
 import Login from "./components/Login";
 import Layout from "./components/Layout"; // formerly Dashboard.jsx
 import DashboardHome from "./components/DashboardHome"; // new dashboard content
-
 import AccountsPage from "./components/Accountspage";
 import Contacts from "./components/Contacts";
 import Leads from "./components/Leads";
@@ -70,6 +69,9 @@ import Webhook from "./Admin/Setup/Webhook";
 import AddressCountry from "./Admin/Setup/AddressCountry";
 import AuthenticationProvider from "./Admin/Setup/AuthenticationProvider";
 import Attachments from "./Admin/Data/Attachments";
+import JobSettings from "./Admin/System/JobSettings";
+import OAuthProviders from "./Admin/Data/OAuthProviders";
+import AppSecrets from "./Admin/Data/AppSecrets";
 
 
 const App = () => {
@@ -162,6 +164,9 @@ const App = () => {
           <Route path="/setup/authentication-providers" element={<AuthenticationProvider/>}/>
           <Route path="/data/import" element={<Import/>}/>
           <Route path="/data/attachments" element={<Attachments/>}/>
+          <Route path="/admin/system/job-settings" element={<JobSettings/>}/>
+          <Route path="/data/oauth-providers" element={<OAuthProviders/>}/>
+          <Route path="/data/app-secrets" element={<AppSecrets/>}/>
           
         </Route>
 
