@@ -1,6 +1,7 @@
 // src/components/Layout.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, NavLink, Link } from "react-router-dom";
+
 import logo from "../assets/logo.webp";
 import {
   FaHome,
@@ -26,7 +27,7 @@ import {
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Detect screen size
   useEffect(() => {
     const checkScreenSize = () => {
@@ -37,8 +38,8 @@ const Layout = () => {
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   useEffect(() => {
@@ -57,90 +58,95 @@ const Layout = () => {
   }, []);
 
   useEffect(() => {
-  function handleClickOutside(event) {
-    if (
-      moreMenuRef.current && !moreMenuRef.current.contains(event.target) &&
-      createMenuRef.current && !createMenuRef.current.contains(event.target)
-    ) {
-      setShowMoreMenu(false);
-      setShowCreateMenu(false);
+    function handleClickOutside(event) {
+      if (
+        moreMenuRef.current &&
+        !moreMenuRef.current.contains(event.target) &&
+        createMenuRef.current &&
+        !createMenuRef.current.contains(event.target)
+      ) {
+        setShowMoreMenu(false);
+        setShowCreateMenu(false);
+      }
     }
-  }
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-const [showFilterMenu, setShowFilterMenu] = useState(false);
-const filterMenuRef = useRef(null);
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const filterMenuRef = useRef(null);
 
-useEffect(() => {
-  function handleClickOutside(event) {
-    if (filterMenuRef.current && !filterMenuRef.current.contains(event.target)) {
-      setShowFilterMenu(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        filterMenuRef.current &&
+        !filterMenuRef.current.contains(event.target)
+      ) {
+        setShowFilterMenu(false);
+      }
     }
-  }
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-
-useEffect(() => {
-  function handleClickOutside(event) {
-    if (
-      moreMenuRef.current && !moreMenuRef.current.contains(event.target) &&
-      createMenuRef.current && !createMenuRef.current.contains(event.target) &&
-      userMenuRef.current && !userMenuRef.current.contains(event.target)
-    ) {
-      setShowMoreMenu(false);
-      setShowCreateMenu(false);
-      setShowUserMenu(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        moreMenuRef.current &&
+        !moreMenuRef.current.contains(event.target) &&
+        createMenuRef.current &&
+        !createMenuRef.current.contains(event.target) &&
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target)
+      ) {
+        setShowMoreMenu(false);
+        setShowCreateMenu(false);
+        setShowUserMenu(false);
+      }
     }
-  }
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
-
-
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreMenuRef = useRef(null);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
-const createMenuRef = useRef(null);
-const [showUserMenu, setShowUserMenu] = useState(false);
-const userMenuRef = useRef(null);
+  const createMenuRef = useRef(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
 
-// Close sidebar when clicking on mobile overlay
-const closeSidebar = () => {
-  setIsSidebarOpen(false);
-};
-
-
+  // Close sidebar when clicking on mobile overlay
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Mobile overlay */}
       {isMobile && isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`
-        ${isMobile ? 'fixed' : 'relative'} 
-        ${isMobile && !isSidebarOpen ? '-translate-x-full' : 'translate-x-0'}
+      <aside
+        className={`
+        ${isMobile ? "fixed" : "relative"} 
+        ${isMobile && !isSidebarOpen ? "-translate-x-full" : "translate-x-0"}
         w-64 bg-white border-r border-gray-200 p-4 flex flex-col h-full z-50 transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:static
-      `}>
+      `}
+      >
         {/* Mobile close button */}
         {isMobile && (
           <button
@@ -160,49 +166,83 @@ const closeSidebar = () => {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link
+                <NavLink
                   to="/dashboard"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded 
+     ${
+       isActive
+         ? "bg-blue-100 text-blue-600 font-semibold"
+         : "text-gray-700 hover:text-blue-600"
+     }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaHome /> Home
-                </Link>
+                </NavLink>
               </li>
+
               <li>
-                <Link
+                <NavLink
                   to="/accounts"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded 
+     ${
+       isActive
+         ? "bg-blue-100 text-blue-600 font-semibold"
+         : "text-gray-700 hover:text-blue-600"
+     }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaUserTie /> Accounts
-                </Link>
+                </NavLink>
               </li>
+
               <li>
-                <Link
+                <NavLink
                   to="/contact"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaAddressBook /> Contacts
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/leads"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaUserPlus /> Leads
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/opportunity"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaDollarSign /> Opportunities
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -213,49 +253,79 @@ const closeSidebar = () => {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link
+                <NavLink
                   to="/email"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaEnvelope /> Emails
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/meetings"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaCalendarAlt /> Meetings
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/calls"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaPhone /> Calls
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/task"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaTasks /> Tasks
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/calendar"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaCalendar /> Calendar
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -266,22 +336,34 @@ const closeSidebar = () => {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link
+                <NavLink
                   to="/cases"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaSuitcase /> Cases
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/knowledgebase"
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-2 py-1 rounded ${
+                      isActive
+                        ? "bg-blue-100 text-blue-600 font-semibold"
+                        : "text-gray-700 hover:text-blue-600"
+                    }`
+                  }
                   onClick={isMobile ? closeSidebar : undefined}
                 >
                   <FaBook /> Knowledge Base
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -305,29 +387,41 @@ const closeSidebar = () => {
                   </h4>
                   <ul className="space-y-1">
                     <li>
-                      <Link
+                      <NavLink
                         to="/campaigns"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Campaigns
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
+                      <NavLink
                         to="/targetlist"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Target Lists
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </div>
@@ -337,16 +431,22 @@ const closeSidebar = () => {
                   </h4>
                   <ul className="space-y-1">
                     <li>
-                      <Link
+                      <NavLink
                         to="/documents"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Documents
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </div>
@@ -356,84 +456,120 @@ const closeSidebar = () => {
                   </h4>
                   <ul className="space-y-1">
                     <li>
-                      <Link
+                      <NavLink
                         to="/users"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Users
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
+                      <NavLink
                         to="/teams"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Teams
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
+                      <NavLink
                         to="/workingtimecalendars"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Working Time Calendars
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </div>
                 <div>
                   <ul className="space-y-1">
                     <li>
-                      <Link
+                      <NavLink
                         to="/email-templates"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Email Templates
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
+                      <NavLink
                         to="/templates"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Templates
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
+                      <NavLink
                         to="/import"
-                        className="hover:text-blue-600 cursor-pointer block"
+                        className={({ isActive }) =>
+                          `block px-2 py-1 rounded ${
+                            isActive
+                              ? "bg-blue-100 text-blue-600 font-semibold"
+                              : "hover:text-blue-600 cursor-pointer"
+                          }`
+                        }
                         onClick={() => {
                           setShowMoreMenu(false);
                           if (isMobile) closeSidebar();
                         }}
                       >
                         Import
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </div>
@@ -457,7 +593,7 @@ const closeSidebar = () => {
                 <FaBars size={20} />
               </button>
             )}
-            
+
             <FaSearch className="text-gray-400 flex-shrink-0" />
             <input
               type="text"
@@ -468,12 +604,16 @@ const closeSidebar = () => {
             {/* 3-dot dropdown beside Search */}
             <div className="relative ml-2" ref={filterMenuRef}>
               <button onClick={() => setShowFilterMenu(!showFilterMenu)}>
-                <span className="text-xl text-gray-600 hover:text-blue-600">⋮</span>
+                <span className="text-xl text-gray-600 hover:text-blue-600">
+                  ⋮
+                </span>
               </button>
 
               {showFilterMenu && (
                 <div className="absolute right-0 top-8 w-56 bg-white border rounded shadow-md z-50">
-                  <div className="text-sm font-semibold px-4 py-2 text-gray-600 border-b">Add Field</div>
+                  <div className="text-sm font-semibold px-4 py-2 text-gray-600 border-b">
+                    Add Field
+                  </div>
                   <ul className="text-sm text-gray-700 max-h-64 overflow-y-auto">
                     {[
                       "Assigned User",
@@ -512,101 +652,117 @@ const closeSidebar = () => {
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4 text-gray-500 text-lg">
-           <div className="relative" ref={createMenuRef}>
-  <FaPlus
-    className="cursor-pointer hover:text-blue-600"
-    onClick={() => setShowCreateMenu(!showCreateMenu)}
-  />
+            <div className="relative" ref={createMenuRef}>
+              <FaPlus
+                className="cursor-pointer hover:text-blue-600"
+                onClick={() => setShowCreateMenu(!showCreateMenu)}
+              />
 
-  {showCreateMenu && (
-    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-50">
-      <div className="py-2 text-sm text-gray-700">
-        <div className="px-4 py-1 text-gray-500">Create</div>
-        <ul>
-          {[
-            { label: "Account", path: "/accounts" },
-            { label: "Contact", path: "/contact" },
-            { label: "Lead", path: "/leads" },
-            { label: "Opportunity", path: "/opportunity" },
-            { label: "Meeting", path: "/meetings" },
-            { label: "Call", path: "/calls" },
-            { label: "Task", path: "/task" },
-            { label: "Case", path: "/cases" },
-            { label: "Email", path: "/email" }
-          ].map(({ label, path }, idx) => (
-            <li key={idx}>
-              <Link
-                to={path}
-                onClick={() => setShowCreateMenu(false)}
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  )}
-</div>
+              {showCreateMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-50">
+                  <div className="py-2 text-sm text-gray-700">
+                    <div className="px-4 py-1 text-gray-500">Create</div>
+                    <ul>
+                      {[
+                        { label: "Account", path: "/accounts" },
+                        { label: "Contact", path: "/contact" },
+                        { label: "Lead", path: "/leads" },
+                        { label: "Opportunity", path: "/opportunity" },
+                        { label: "Meeting", path: "/meetings" },
+                        { label: "Call", path: "/calls" },
+                        { label: "Task", path: "/task" },
+                        { label: "Case", path: "/cases" },
+                        { label: "Email", path: "/email" },
+                      ].map(({ label, path }, idx) => (
+                        <li key={idx}>
+                          <Link
+                            to={path}
+                            onClick={() => setShowCreateMenu(false)}
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <FaBell className="cursor-pointer hover:text-blue-600" />
             <div className="relative" ref={userMenuRef}>
-  <img
-    src="https://ui-avatars.com/api/?name=AD&background=0D8ABC&color=fff"
-    alt="User Avatar"
-    className="w-8 h-8 rounded-full cursor-pointer flex-shrink-0"
-    onClick={() => setShowUserMenu(!showUserMenu)}
-  />
+              <img
+                src="https://ui-avatars.com/api/?name=AD&background=0D8ABC&color=fff"
+                alt="User Avatar"
+                className="w-8 h-8 rounded-full cursor-pointer flex-shrink-0"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              />
 
-  {showUserMenu && (
-    <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow z-50 text-sm text-gray-700">
-      <div className="px-4 py-2 border-b">
-        <span className="text-xs uppercase text-gray-400">AD</span>
-        <div className="text-sm font-medium">Admin</div>
-      </div>
-      <ul className="py-1">
-        <li>
-          <Link to="/admin" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
-            Administration
-          </Link>
-        </li>
-        <li>
-          <Link to="/preferences" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
-            Preferences
-          </Link>
-        </li>
-        <li>
-          <Link to="/last-viewed" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
-            Last Viewed
-          </Link>
-        </li>
-        <li>
-          <Link to="/about" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 hover:bg-gray-100">
-            About
-          </Link>
-        </li>
-        <li>
-  <button
-    onClick={() => {
-      setShowUserMenu(false);
-      const confirmed = window.confirm("Are you sure you want to log out?");
-      if (confirmed) {
-        // Clear token or any logout logic
-        window.location.href = "/login";
-      }
-    }}
-    className="w-full text-left px-4 py-2 hover:bg-gray-100"
-  >
-    Log Out
-  </button>
-</li>
-
-      </ul>
-    </div>
-  )}
-</div>
-
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow z-50 text-sm text-gray-700">
+                  <div className="px-4 py-2 border-b">
+                    <span className="text-xs uppercase text-gray-400">AD</span>
+                    <div className="text-sm font-medium">Admin</div>
+                  </div>
+                  <ul className="py-1">
+                    <li>
+                      <Link
+                        to="/admin"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Administration
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/preferences"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Preferences
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/last-viewed"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Last Viewed
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/about"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        About
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          const confirmed = window.confirm(
+                            "Are you sure you want to log out?"
+                          );
+                          if (confirmed) {
+                            // Clear token or any logout logic
+                            window.location.href = "/login";
+                          }
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                      >
+                        Log Out
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 

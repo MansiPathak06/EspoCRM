@@ -477,7 +477,7 @@ const Call = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white border-b px-3 sm:px-4 md:px-6 py-3">
+      <div className="bg-white border-b px-2 sm:px-4 md:px-6 py-2">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <select className="border border-gray-300 rounded sm:rounded-l sm:rounded-r-none px-3 py-2 bg-white text-sm w-full sm:w-auto">
             <option>All</option>

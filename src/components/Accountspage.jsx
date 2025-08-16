@@ -6,6 +6,7 @@ import {
   MoreHorizontal,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 
 const AccountsPage = () => {
@@ -16,8 +17,8 @@ const AccountsPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     website: "",
-    email: "",
-    phone: "",
+    emails: [{ value: "", type: "office" }],
+    phones: [{ value: "", type: "office", countryCode: "+1" }],
     billingStreet: "",
     billingCity: "",
     billingState: "",
@@ -35,18 +36,81 @@ const AccountsPage = () => {
     teams: "",
   });
 
+  const emailTypes = ["office", "home", "personal", "work", "other"];
+  const phoneTypes = ["office", "home", "mobile", "work", "fax", "other"];
+  const countryCodes = [
+    { code: "+1", country: "US/CA" },
+    { code: "+91", country: "India" },
+    { code: "+44", country: "UK" },
+    { code: "+49", country: "Germany" },
+    { code: "+33", country: "France" },
+    { code: "+61", country: "Australia" },
+    { code: "+81", country: "Japan" },
+    { code: "+86", country: "China" },
+    { code: "+7", country: "Russia" },
+    { code: "+55", country: "Brazil" },
+  ];
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleEmailChange = (index, field, value) => {
+    const newEmails = [...formData.emails];
+    newEmails[index] = { ...newEmails[index], [field]: value };
+    setFormData({ ...formData, emails: newEmails });
+  };
+
+  const handlePhoneChange = (index, field, value) => {
+    const newPhones = [...formData.phones];
+    newPhones[index] = { ...newPhones[index], [field]: value };
+    setFormData({ ...formData, phones: newPhones });
+  };
+
+  const addEmail = () => {
+    setFormData({
+      ...formData,
+      emails: [...formData.emails, { value: "", type: "office" }],
+    });
+  };
+
+  const addPhone = () => {
+    setFormData({
+      ...formData,
+      phones: [...formData.phones, { value: "", type: "office", countryCode: "+1" }],
+    });
+  };
+
+  const removeEmail = (index) => {
+    if (formData.emails.length > 1) {
+      const newEmails = formData.emails.filter((_, i) => i !== index);
+      setFormData({ ...formData, emails: newEmails });
+    }
+  };
+
+  const removePhone = (index) => {
+    if (formData.phones.length > 1) {
+      const newPhones = formData.phones.filter((_, i) => i !== index);
+      setFormData({ ...formData, phones: newPhones });
+    }
+  };
+
   const handleSave = () => {
     if (formData.name) {
-      setAccounts([...accounts, formData]);
+      const accountData = {
+        ...formData,
+        // Format emails and phones for display
+        email: formData.emails.filter(e => e.value).map(e => `${e.value} (${e.type})`).join(', '),
+        phone: formData.phones.filter(p => p.value).map(p => `${p.countryCode} ${p.value} (${p.type})`).join(', ')
+      };
+      setAccounts([...accounts, accountData]);
+      
+      // Reset form
       setFormData({
         name: "",
         website: "",
-        email: "",
-        phone: "",
+        emails: [{ value: "", type: "office" }],
+        phones: [{ value: "", type: "office", countryCode: "+1" }],
         billingStreet: "",
         billingCity: "",
         billingState: "",
@@ -72,8 +136,8 @@ const AccountsPage = () => {
     setFormData({
       name: "",
       website: "",
-      email: "",
-      phone: "",
+      emails: [{ value: "", type: "office" }],
+      phones: [{ value: "", type: "office", countryCode: "+1" }],
       billingStreet: "",
       billingCity: "",
       billingState: "",
@@ -159,48 +223,108 @@ const AccountsPage = () => {
 
                 {/* Email and Phone Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                  {/* Email Section */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email
                     </label>
-                    <div className="flex">
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="flex-1 border border-gray-300 rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                      />
-                      <button className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-gray-50 flex-shrink-0">
-                        <Search size={16} />
-                      </button>
-                    </div>
-                    <button className="mt-2 text-gray-400">
-                      <Plus size={16} />
+                    {formData.emails.map((email, index) => (
+                      <div key={index} className="mb-3">
+                        <div className="flex">
+                          <select
+                            value={email.type}
+                            onChange={(e) => handleEmailChange(index, "type", e.target.value)}
+                            className="border border-gray-300 rounded-l px-2 py-2 bg-white text-sm flex-shrink-0"
+                          >
+                            {emailTypes.map(type => (
+                              <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+                            ))}
+                          </select>
+                          <input
+                            type="email"
+                            value={email.value}
+                            onChange={(e) => handleEmailChange(index, "value", e.target.value)}
+                            className="flex-1 border-t border-b border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                          />
+                          <button className="border border-l-0 border-gray-300 px-3 py-2 bg-gray-50 flex-shrink-0">
+                            <Search size={16} />
+                          </button>
+                          {formData.emails.length > 1 && (
+                            <button
+                              onClick={() => removeEmail(index)}
+                              className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-red-50 text-red-500 hover:bg-red-100 flex-shrink-0"
+                            >
+                              <X size={16} />
+                            </button>
+                          )}
+                          {formData.emails.length === 1 && (
+                            <div className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-gray-50"></div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      onClick={addEmail}
+                      className="text-blue-500 hover:text-blue-700 flex items-center"
+                    >
+                      <Plus size={16} className="mr-1" />
+                      Add Email
                     </button>
                   </div>
+
+                  {/* Phone Section */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone
                     </label>
-                    <div className="flex">
-                      <select className="border border-gray-300 rounded-l px-2 sm:px-3 py-2 bg-white text-sm flex-shrink-0">
-                        <option>Office</option>
-                      </select>
-                      <span className="border-t border-b border-gray-300 px-2 py-2 bg-gray-50 text-sm flex-shrink-0">
-                        +1
-                      </span>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="000-000-0000"
-                        className="flex-1 border border-gray-300 rounded-r px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base min-w-0"
-                      />
-                    </div>
-                    <button className="mt-2 text-gray-400">
-                      <Plus size={16} />
+                    {formData.phones.map((phone, index) => (
+                      <div key={index} className="mb-3">
+                        <div className="flex">
+                          <select
+                            value={phone.type}
+                            onChange={(e) => handlePhoneChange(index, "type", e.target.value)}
+                            className="border border-gray-300 rounded-l px-2 py-2 bg-white text-sm flex-shrink-0"
+                          >
+                            {phoneTypes.map(type => (
+                              <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={phone.countryCode}
+                            onChange={(e) => handlePhoneChange(index, "countryCode", e.target.value)}
+                            className="border-t border-b border-gray-300 px-2 py-2 bg-white text-sm flex-shrink-0"
+                          >
+                            {countryCodes.map(cc => (
+                              <option key={cc.code} value={cc.code}>{cc.code}</option>
+                            ))}
+                          </select>
+                          <input
+                            type="tel"
+                            value={phone.value}
+                            onChange={(e) => handlePhoneChange(index, "value", e.target.value)}
+                            placeholder="000-000-0000"
+                            className="flex-1 border-t border-b border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base min-w-0"
+                          />
+                          {formData.phones.length > 1 && (
+                            <button
+                              onClick={() => removePhone(index)}
+                              className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-red-50 text-red-500 hover:bg-red-100 flex-shrink-0"
+                            >
+                              <X size={16} />
+                            </button>
+                          )}
+                          {formData.phones.length === 1 && (
+                            <div className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-gray-50"></div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      onClick={addPhone}
+                      className="text-blue-500 hover:text-blue-700 flex items-center"
+                    >
+                      <Plus size={16} className="mr-1" />
+                      Add Phone
                     </button>
                   </div>
                 </div>
@@ -321,6 +445,8 @@ const AccountsPage = () => {
                       <option value="customer">Customer</option>
                       <option value="partner">Partner</option>
                       <option value="vendor">Vendor</option>
+                      <option value="prospect">Prospect</option>
+                      <option value="competitor">Competitor</option>
                     </select>
                   </div>
                   <div>
@@ -337,6 +463,10 @@ const AccountsPage = () => {
                       <option value="technology">Technology</option>
                       <option value="healthcare">Healthcare</option>
                       <option value="finance">Finance</option>
+                      <option value="education">Education</option>
+                      <option value="manufacturing">Manufacturing</option>
+                      <option value="retail">Retail</option>
+                      <option value="consulting">Consulting</option>
                     </select>
                   </div>
                 </div>
@@ -373,8 +503,10 @@ const AccountsPage = () => {
                     className="flex-1 border border-gray-300 rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   >
                     <option value="">Select</option>
-                    <option value="user1">User 1</option>
-                    <option value="user2">User 2</option>
+                    <option value="user1">John Doe</option>
+                    <option value="user2">Jane Smith</option>
+                    <option value="user3">Mike Johnson</option>
+                    <option value="user4">Sarah Wilson</option>
                   </select>
                   <button className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-gray-50 flex-shrink-0">
                     <ChevronDown size={16} />
@@ -396,6 +528,8 @@ const AccountsPage = () => {
                     <option value="">Select</option>
                     <option value="sales">Sales Team</option>
                     <option value="marketing">Marketing Team</option>
+                    <option value="support">Support Team</option>
+                    <option value="development">Development Team</option>
                   </select>
                   <button className="border border-l-0 border-gray-300 rounded-r px-3 py-2 bg-gray-50 flex-shrink-0">
                     <ChevronDown size={16} />
@@ -427,8 +561,6 @@ const AccountsPage = () => {
           </button>
         </div>
       </div>
-
-      
 
       {/* Content Area */}
       <div className="p-4 sm:p-6">
@@ -493,13 +625,13 @@ const AccountsPage = () => {
                     {account.email && (
                       <div className="flex justify-between">
                         <span className="font-medium">Email:</span>
-                        <span>{account.email}</span>
+                        <span className="text-right">{account.email}</span>
                       </div>
                     )}
                     {account.phone && (
                       <div className="flex justify-between">
                         <span className="font-medium">Phone:</span>
-                        <span>{account.phone}</span>
+                        <span className="text-right">{account.phone}</span>
                       </div>
                     )}
                     {account.type && (
@@ -541,10 +673,10 @@ const AccountsPage = () => {
                       <td className="py-3 px-4 text-blue-600 hover:underline cursor-pointer">
                         {account.name}
                       </td>
-                      <td className="py-3 px-4 text-gray-700">
+                      <td className="py-3 px-4 text-gray-700 max-w-xs truncate">
                         {account.email}
                       </td>
-                      <td className="py-3 px-4 text-gray-700">
+                      <td className="py-3 px-4 text-gray-700 max-w-xs truncate">
                         {account.phone}
                       </td>
                       <td className="py-3 px-4 text-gray-700">

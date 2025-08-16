@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Plus, Calendar, DollarSign, Users, MoreHorizontal, ChevronDown, X } from 'lucide-react';
+import { Search, Plus, Calendar, DollarSign, Users, MoreHorizontal, ChevronDown, X, IndianRupee, TrendingUp } from 'lucide-react';
 
 const Opportunity = () => {
   const [currentView, setCurrentView] = useState('list'); // 'list' or 'create'
+  const [showCalendar, setShowCalendar] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     account: '',
@@ -22,6 +23,15 @@ const Opportunity = () => {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleDateSelect = (date) => {
+    handleInputChange('closeDate', date);
+    setShowCalendar(false);
+  };
+
+  const handleCalendarToggle = () => {
+    setShowCalendar(!showCalendar);
   };
 
   const handleSave = () => {
@@ -45,6 +55,113 @@ const Opportunity = () => {
       teams: '',
       description: ''
     });
+  };
+
+  // Simple Calendar Component
+  const CalendarPicker = ({ onDateSelect, selectedDate, onClose }) => {
+    const today = new Date();
+    const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+    const [currentYear, setCurrentYear] = useState(today.getFullYear());
+    
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+    
+    const days = [];
+    
+    // Empty cells for days before the first day of month
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(<div key={`empty-${i}`} className="p-2"></div>);
+    }
+    
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const dateString = date.toISOString().split('T')[0];
+      const isSelected = selectedDate === dateString;
+      const isToday = date.toDateString() === today.toDateString();
+      
+      days.push(
+        <button
+          key={day}
+          onClick={() => onDateSelect(dateString)}
+          className={`p-2 text-sm rounded hover:bg-blue-100 transition-colors ${
+            isSelected ? 'bg-blue-600 text-white' : 
+            isToday ? 'bg-blue-100 text-blue-600 font-semibold' : 
+            'text-gray-700'
+          }`}
+        >
+          {day}
+        </button>
+      );
+    }
+    
+    return (
+      <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 min-w-64">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => {
+              if (currentMonth === 0) {
+                setCurrentMonth(11);
+                setCurrentYear(currentYear - 1);
+              } else {
+                setCurrentMonth(currentMonth - 1);
+              }
+            }}
+            className="p-1 hover:bg-gray-100 rounded"
+          >
+            <ChevronDown className="h-4 w-4 rotate-90" />
+          </button>
+          
+          <h3 className="font-semibold text-gray-900">
+            {months[currentMonth]} {currentYear}
+          </h3>
+          
+          <button
+            onClick={() => {
+              if (currentMonth === 11) {
+                setCurrentMonth(0);
+                setCurrentYear(currentYear + 1);
+              } else {
+                setCurrentMonth(currentMonth + 1);
+              }
+            }}
+            className="p-1 hover:bg-gray-100 rounded"
+          >
+            <ChevronDown className="h-4 w-4 -rotate-90" />
+          </button>
+        </div>
+        
+        {/* Days of week */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="p-2 text-xs font-medium text-gray-500 text-center">
+              {day}
+            </div>
+          ))}
+        </div>
+        
+        {/* Calendar days */}
+        <div className="grid grid-cols-7 gap-1">
+          {days}
+        </div>
+        
+        {/* Footer */}
+        <div className="flex justify-end mt-4 pt-4 border-t">
+          <button
+            onClick={onClose}
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
   };
 
   if (currentView === 'create') {
@@ -181,12 +298,12 @@ const Opportunity = () => {
                     onChange={(e) => handleInputChange('amount', e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 pr-16 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <span className="absolute right-3 top-3 text-gray-500 text-sm">USD</span>
+                  <span className="absolute right-3 top-3 text-gray-500 text-sm">INR</span>
                 </div>
               </div>
 
               {/* Close Date */}
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Close Date <span className="text-red-500">*</span>
                 </label>
@@ -195,9 +312,23 @@ const Opportunity = () => {
                     type="date"
                     value={formData.closeDate}
                     onChange={(e) => handleInputChange('closeDate', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <Calendar className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
+                  <button
+                    type="button"
+                    onClick={handleCalendarToggle}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <Calendar className="h-4 w-4" />
+                  </button>
+                  
+                  {showCalendar && (
+                    <CalendarPicker
+                      selectedDate={formData.closeDate}
+                      onDateSelect={handleDateSelect}
+                      onClose={() => setShowCalendar(false)}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -314,7 +445,7 @@ const Opportunity = () => {
             <h2 className="text-base sm:text-lg font-medium text-gray-900 mb-4">Stream</h2>
             <div className="text-center py-8 sm:py-12">
               <div className="text-gray-400 mb-2">
-                <DollarSign size={40} className="sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
+                <TrendingUp size={40} className="sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
               </div>
               <p className="text-gray-500 text-sm sm:text-base">No Data</p>
             </div>
@@ -340,11 +471,11 @@ const Opportunity = () => {
         <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
           <div className="flex items-center">
             <div className="bg-green-100 rounded-lg p-2 mr-3 flex-shrink-0">
-              <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+              <IndianRupee className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs sm:text-sm text-gray-600 truncate">Total Value</p>
-              <p className="text-base sm:text-lg font-semibold">$0</p>
+              <p className="text-base sm:text-lg font-semibold">₹0</p>
             </div>
           </div>
         </div>
@@ -368,7 +499,7 @@ const Opportunity = () => {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs sm:text-sm text-gray-600 truncate">This Month</p>
-              <p className="text-base sm:text-lg font-semibold">$0</p>
+              <p className="text-base sm:text-lg font-semibold">₹0</p>
             </div>
           </div>
         </div>
@@ -376,11 +507,11 @@ const Opportunity = () => {
         <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
           <div className="flex items-center">
             <div className="bg-orange-100 rounded-lg p-2 mr-3 flex-shrink-0">
-              <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs sm:text-sm text-gray-600 truncate">Closed Won</p>
-              <p className="text-base sm:text-lg font-semibold">$0</p>
+              <p className="text-base sm:text-lg font-semibold">₹0</p>
             </div>
           </div>
         </div>

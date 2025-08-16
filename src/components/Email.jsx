@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Search, 
   Mail, 
@@ -28,6 +28,10 @@ const Email = () => {
   const [selectedFolder, setSelectedFolder] = useState('inbox');
   const [showCompose, setShowCompose] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [attachments, setAttachments] = useState([]);
+  const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
+  
   const [composeData, setComposeData] = useState({
     from: '',
     to: '',
@@ -59,6 +63,7 @@ const Email = () => {
 
   const handleSend = () => {
     console.log('Sending email:', composeData);
+    console.log('Attachments:', attachments);
     setShowCompose(false);
   };
 
@@ -80,15 +85,136 @@ const Email = () => {
       template: '',
       htmlEnabled: true
     });
+    setAttachments([]);
   };
 
   const handleFolderSelect = (folderId) => {
     setSelectedFolder(folderId);
-    setShowSidebar(false); // Close sidebar on mobile after selection
+    setShowSidebar(false);
+  };
+
+  // Text formatting functions using document.execCommand
+  const formatText = (command, value = null) => {
+    if (!composeData.htmlEnabled) return;
+    
+    const editor = textareaRef.current;
+    if (!editor) return;
+    
+    editor.focus();
+    
+    switch (command) {
+      case 'bold':
+        document.execCommand('bold', false, null);
+        break;
+      case 'italic':
+        document.execCommand('italic', false, null);
+        break;
+      case 'underline':
+        document.execCommand('underline', false, null);
+        break;
+      case 'link':
+        const url = prompt('Enter URL:') || '#';
+        document.execCommand('createLink', false, url);
+        break;
+      case 'unorderedList':
+        document.execCommand('insertUnorderedList', false, null);
+        break;
+      case 'orderedList':
+        document.execCommand('insertOrderedList', false, null);
+        break;
+      case 'alignLeft':
+        document.execCommand('justifyLeft', false, null);
+        break;
+      case 'alignCenter':
+        document.execCommand('justifyCenter', false, null);
+        break;
+      case 'alignRight':
+        document.execCommand('justifyRight', false, null);
+        break;
+      case 'alignJustify':
+        document.execCommand('justifyFull', false, null);
+        break;
+      case 'fontSize':
+        document.execCommand('fontSize', false, value);
+        break;
+      case 'fontName':
+        document.execCommand('fontName', false, value);
+        break;
+      case 'foreColor':
+        document.execCommand('foreColor', false, value);
+        break;
+      case 'hiliteColor':
+        document.execCommand('hiliteColor', false, value);
+        break;
+      case 'indent':
+        document.execCommand('indent', false, null);
+        break;
+      case 'outdent':
+        document.execCommand('outdent', false, null);
+        break;
+      case 'insertHorizontalRule':
+        document.execCommand('insertHorizontalRule', false, null);
+        break;
+      case 'removeFormat':
+        document.execCommand('removeFormat', false, null);
+        break;
+      default:
+        break;
+    }
+    
+    // Update state with new content
+    setTimeout(() => {
+      handleComposeChange('body', editor.innerHTML);
+    }, 0);
+  };
+
+  // File attachment functions
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    const newAttachments = files.map(file => ({
+      id: Date.now() + Math.random(),
+      file,
+      name: file.name,
+      size: file.size,
+      type: file.type
+    }));
+    
+    setAttachments(prev => [...prev, ...newAttachments]);
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeAttachment = (id) => {
+    setAttachments(prev => prev.filter(att => att.id !== id));
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (
     <div className="flex-1 bg-gray-50 relative">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+        accept="*/*"
+      />
+
       {/* Main Email Interface */}
       <div className="flex h-screen">
         {/* Mobile Menu Backdrop */}
@@ -379,57 +505,263 @@ const Email = () => {
                   
                   {/* Text Editor Toolbar */}
                   <div className="border border-gray-300 rounded-t bg-gray-50 p-2 flex flex-wrap gap-1 overflow-x-auto">
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
+                    {/* Basic Formatting */}
+                    <button 
+                      onClick={() => formatText('bold')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Bold"
+                    >
                       <Bold className="h-4 w-4" />
                     </button>
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
+                    <button 
+                      onClick={() => formatText('italic')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Italic"
+                    >
                       <Italic className="h-4 w-4" />
                     </button>
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
+                    <button 
+                      onClick={() => formatText('underline')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Underline"
+                    >
                       <Underline className="h-4 w-4" />
                     </button>
+                    
                     <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
+                    
+                    {/* Link */}
+                    <button 
+                      onClick={() => formatText('link')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Insert Link"
+                    >
                       <Link className="h-4 w-4" />
                     </button>
+                    
                     <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
-                    <select className="text-sm border-0 bg-transparent flex-shrink-0">
-                      <option>14</option>
+                    
+                    {/* Font Size */}
+                    <select 
+                      className="text-sm border-0 bg-transparent flex-shrink-0 hover:bg-gray-200 rounded px-2"
+                      onChange={(e) => formatText('fontSize', e.target.value)}
+                      title="Font Size"
+                    >
+                      <option value="">Size</option>
+                      <option value="1">10px</option>
+                      <option value="2">12px</option>
+                      <option value="3">14px</option>
+                      <option value="4">16px</option>
+                      <option value="5">18px</option>
+                      <option value="6">20px</option>
+                      <option value="7">24px</option>
                     </select>
+                    
+                    {/* Font Family */}
+                    <select 
+                      className="text-sm border-0 bg-transparent flex-shrink-0 hover:bg-gray-200 rounded px-2"
+                      onChange={(e) => formatText('fontName', e.target.value)}
+                      title="Font Family"
+                    >
+                      <option value="">Font</option>
+                      <option value="Arial">Arial</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Times New Roman">Times</option>
+                      <option value="Verdana">Verdana</option>
+                      <option value="Courier New">Courier</option>
+                    </select>
+                    
                     <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
-                      <Type className="h-4 w-4" />
-                    </button>
+                    
+                    {/* Text Color */}
+                    <input
+                      type="color"
+                      onChange={(e) => formatText('foreColor', e.target.value)}
+                      className="w-8 h-8 border-0 rounded cursor-pointer flex-shrink-0"
+                      title="Text Color"
+                      defaultValue="#000000"
+                    />
+                    
+                    {/* Background Color */}
+                    <input
+                      type="color"
+                      onChange={(e) => formatText('hiliteColor', e.target.value)}
+                      className="w-8 h-8 border-0 rounded cursor-pointer flex-shrink-0"
+                      title="Highlight Color"
+                      defaultValue="#ffff00"
+                    />
+                    
                     <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
+                    
+                    {/* Lists */}
+                    <button 
+                      onClick={() => formatText('unorderedList')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Bullet List"
+                    >
                       <List className="h-4 w-4" />
                     </button>
-                    <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
+                    <button 
+                      onClick={() => formatText('orderedList')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Numbered List"
+                    >
+                      <span className="text-sm font-bold">1.</span>
+                    </button>
+                    
+                    <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
+                    
+                    {/* Alignment */}
+                    <button 
+                      onClick={() => formatText('alignLeft')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Align Left"
+                    >
                       <AlignLeft className="h-4 w-4" />
                     </button>
+                    <button 
+                      onClick={() => formatText('alignCenter')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Align Center"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm2 10.5a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => formatText('alignRight')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Align Right"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 4.75A.75.75 0 0017.25 4H2.75a.75.75 0 000 1.5h14.5a.75.75 0 00.75-.75zm0 10.5a.75.75 0 01-.75.75H7.25a.75.75 0 010-1.5h9.5a.75.75 0 01.75.75zM18 10a.75.75 0 01-.75.75H2.75a.75.75 0 010-1.5h14.5A.75.75 0 0118 10z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => formatText('alignJustify')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Justify"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    
                     <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
+                    
+                    {/* Indent */}
+                    <button 
+                      onClick={() => formatText('indent')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Increase Indent"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M15 4.75A.75.75 0 0115.75 4h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0115 4.75zm0 10.5a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zM15 10a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0115 10zM2.5 7.25a.75.75 0 00-1.06 1.06L4.19 11l-2.75 2.69a.75.75 0 101.06 1.06L6.56 11 2.5 7.25z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => formatText('outdent')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Decrease Indent"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M15 4.75A.75.75 0 0115.75 4h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0115 4.75zm0 10.5a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zM15 10a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0115 10zM6.56 9L2.5 12.75a.75.75 0 101.06 1.06L6.31 11l-2.75-2.81A.75.75 0 102.5 7.25L6.56 9z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    
+                    <div className="w-px bg-gray-300 mx-1 flex-shrink-0"></div>
+                    
+                    {/* Additional Options */}
+                    <button 
+                      onClick={() => formatText('insertHorizontalRule')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Insert Line"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => formatText('removeFormat')}
+                      className="p-1 hover:bg-gray-200 rounded flex-shrink-0 transition-colors"
+                      title="Clear Formatting"
+                    >
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    
                     <button className="p-1 hover:bg-gray-200 rounded flex-shrink-0">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
                   
-                  <textarea
-                    value={composeData.body}
-                    onChange={(e) => handleComposeChange('body', e.target.value)}
-                    rows={6}
-                    className="w-full border border-gray-300 border-t-0 rounded-b px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[120px]"
+                  {/* Rich Text Editor */}
+                  <div
+                    ref={textareaRef}
+                    contentEditable
+                    onInput={(e) => handleComposeChange('body', e.currentTarget.innerHTML)}
+                    className="w-full border border-gray-300 border-t-0 rounded-b px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[120px] bg-white"
+                    style={{ minHeight: '120px', maxHeight: '300px', overflowY: 'auto' }}
+                    dangerouslySetInnerHTML={{ __html: composeData.body }}
+                    placeholder="Type your message here..."
                   />
+                  
+                  {/* Fallback textarea for non-HTML mode */}
+                  {!composeData.htmlEnabled && (
+                    <textarea
+                      value={composeData.body.replace(/<[^>]*>/g, '')}
+                      onChange={(e) => handleComposeChange('body', e.target.value)}
+                      rows={6}
+                      className="w-full border border-gray-300 border-t-0 rounded-b px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[120px]"
+                      placeholder="Type your message here..."
+                      style={{ display: composeData.htmlEnabled ? 'none' : 'block' }}
+                    />
+                  )}
                 </div>
+
+                {/* Attachments Display */}
+                {attachments.length > 0 && (
+                  <div className="border border-gray-200 rounded p-3">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Attached Files:</h4>
+                    <div className="space-y-2">
+                      {attachments.map((attachment) => (
+                        <div key={attachment.id} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-gray-500" />
+                            <span className="text-sm text-gray-700">{attachment.name}</span>
+                            <span className="text-xs text-gray-500">({formatFileSize(attachment.size)})</span>
+                          </div>
+                          <button
+                            onClick={() => removeAttachment(attachment.id)}
+                            className="p-1 hover:bg-gray-200 rounded"
+                            title="Remove attachment"
+                          >
+                            <X className="h-4 w-4 text-gray-500" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Attachments & HTML */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Attachments</label>
                     <div className="flex gap-2">
-                      <button className="p-2 border border-gray-300 rounded hover:bg-gray-50">
+                      <button 
+                        onClick={handleFileSelect}
+                        className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                        title="Attach file"
+                      >
                         <Paperclip className="h-4 w-4 text-gray-600" />
                       </button>
-                      <button className="p-2 border border-gray-300 rounded hover:bg-gray-50">
+                      <button 
+                        onClick={handleFileSelect}
+                        className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                        title="Browse files"
+                      >
                         <Folder className="h-4 w-4 text-gray-600" />
                       </button>
                     </div>
