@@ -1,572 +1,923 @@
-import React, { useState } from 'react';
-import { Search, Plus, ChevronDown, MoreHorizontal, Edit, Eye, X, Menu } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Plus,
+  MoreHorizontal,
+  Check,
+  X,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  Ban,
+  AlertTriangle,
+} from "lucide-react";
 
 const Users = () => {
   const [users, setUsers] = useState([
     {
       id: 1,
-      name: 'Admin',
-      userName: 'admin',
-      title: '',
-      email: '',
+      name: "Admin",
+      userName: "admin",
+      title: "",
+      email: "",
       isActive: true,
-      type: 'Regular',
-      firstName: 'Admin',
-      lastName: '',
-      phone: '',
-      mobile: '',
-      avatar: null
-    }
+    },
   ]);
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState('create'); // 'create', 'view', 'edit'
-  const [currentUser, setCurrentUser] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showMobileMenu, setShowMobileMenu] = useState({});
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  // Form state
   const [formData, setFormData] = useState({
-    userName: '',
-    firstName: '',
-    lastName: '',
-    title: '',
-    email: '',
-    phone: '',
-    mobile: '',
-    type: 'Regular',
+    userName: "",
+    firstName: "",
+    lastName: "",
+    title: "",
+    email: "",
+    emailOptedOut: false,
+    emailInvalid: false,
+    phone: "",
+    phoneOptedOut: false,
+    phoneInvalid: false,
+    gender: "Not Set",
+    type: "Regular",
     isActive: true,
     teams: [],
-    defaultTeam: '',
+    defaultTeam: "",
     roles: [],
-    workingTimeCalendar: '',
-    layoutSet: '',
-    password: '',
-    confirmPassword: ''
+    workingTimeCalendar: "",
+    layoutSet: "",
+    password: "",
+    confirmPassword: "",
   });
+
+  // Modal states
+  const [showTeamsModal, setShowTeamsModal] = useState(false);
+  const [showDefaultTeamModal, setShowDefaultTeamModal] = useState(false);
+  const [showRolesModal, setShowRolesModal] = useState(false);
+  const [showWorkingTimeModal, setShowWorkingTimeModal] = useState(false);
+  const [showLayoutModal, setShowLayoutModal] = useState(false);
+
+  // Sample data
+  const teams = [
+    "Sales Team",
+    "Marketing Team",
+    "Support Team",
+    "Development Team",
+  ];
+  const roles = [
+    "Administrator",
+    "Manager",
+    "Sales Representative",
+    "Support Agent",
+  ];
+  const workingTimeCalendars = ["Standard", "Flexible", "Part-time", "Remote"];
+  const layoutSets = ["Default", "Compact", "Extended", "Mobile"];
+  const genderOptions = ["Not Set", "Male", "Female", "Other"];
+  const typeOptions = ["Regular", "Admin", "Portal", "System"];
+
+  const generatePassword = () => {
+    const charset =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    let password = "";
+    for (let i = 0; i < 12; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    setFormData((prev) => ({ ...prev, password, confirmPassword: password }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const newUser = {
+      id: users.length + 1,
+      name:
+        `${formData.firstName} ${formData.lastName}`.trim() ||
+        formData.userName,
+      userName: formData.userName,
+      title: formData.title,
+      email: formData.email,
+      isActive: formData.isActive,
+    };
+
+    setUsers([...users, newUser]);
+    setShowCreateForm(false);
+    resetForm();
+  };
 
   const resetForm = () => {
     setFormData({
-      userName: '',
-      firstName: '',
-      lastName: '',
-      title: '',
-      email: '',
-      phone: '',
-      mobile: '',
-      type: 'Regular',
+      userName: "",
+      firstName: "",
+      lastName: "",
+      title: "",
+      email: "",
+      emailOptedOut: false,
+      emailInvalid: false,
+      phone: "",
+      phoneOptedOut: false,
+      phoneInvalid: false,
+      gender: "Not Set",
+      type: "Regular",
       isActive: true,
       teams: [],
-      defaultTeam: '',
+      defaultTeam: "",
       roles: [],
-      workingTimeCalendar: '',
-      layoutSet: '',
-      password: '',
-      confirmPassword: ''
+      workingTimeCalendar: "",
+      layoutSet: "",
+      password: "",
+      confirmPassword: "",
     });
+    setAvatar(null);
   };
-
-  const handleCreateUser = () => {
-    setModalMode('create');
-    setCurrentUser(null);
-    resetForm();
-    setShowModal(true);
-  };
-
-  const handleViewUser = (user) => {
-    setModalMode('view');
-    setCurrentUser(user);
-    setFormData({ ...user });
-    setShowModal(true);
-    setShowMobileMenu({});
-  };
-
-  const handleEditUser = (user) => {
-    setModalMode('edit');
-    setCurrentUser(user);
-    setFormData({ ...user });
-    setShowModal(true);
-    setShowMobileMenu({});
-  };
-
-  const handleSave = () => {
-    if (modalMode === 'create') {
-      const newUser = {
-        id: users.length + 1,
-        ...formData,
-        name: `${formData.firstName} ${formData.lastName}`.trim() || formData.userName
+  const handleAvatarUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatar(e.target.result);
       };
-      setUsers([...users, newUser]);
-    } else if (modalMode === 'edit') {
-      setUsers(users.map(user => 
-        user.id === currentUser.id 
-          ? { ...user, ...formData, name: `${formData.firstName} ${formData.lastName}`.trim() || formData.userName }
-          : user
-      ));
+      reader.readAsDataURL(file);
     }
-    setShowModal(false);
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const generatePassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let password = '';
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setFormData(prev => ({ ...prev, password, confirmPassword: password }));
-  };
-
-  const toggleMobileMenu = (userId) => {
-    setShowMobileMenu(prev => ({
+  const toggleSelection = (field, value) => {
+    setFormData((prev) => ({
       ...prev,
-      [userId]: !prev[userId]
+      [field]: prev[field].includes(value)
+        ? prev[field].filter((item) => item !== value)
+        : [...prev[field], value],
     }));
   };
 
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.userName.toLowerCase().includes(searchTerm.toLowerCase())
+  const Modal = ({ show, onClose, title, children }) => {
+    if (!show) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-96 max-w-full mx-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">{title}</h3>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          {children}
+        </div>
+      </div>
+    );
+  };
+
+  const SelectModal = ({
+    show,
+    onClose,
+    title,
+    options,
+    selected,
+    onToggle,
+    single = false,
+  }) => (
+    <Modal show={show} onClose={onClose} title={title}>
+      <div className="space-y-2 max-h-60 overflow-y-auto">
+        {options.map((option) => (
+          <label
+            key={option}
+            className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+          >
+            <input
+              type={single ? "radio" : "checkbox"}
+              checked={single ? selected === option : selected.includes(option)}
+              onChange={() => onToggle(option)}
+              className="rounded"
+            />
+            <span>{option}</span>
+          </label>
+        ))}
+      </div>
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Done
+        </button>
+      </div>
+    </Modal>
   );
 
-  return (
-    <div className="bg-white min-h-screen">
-      {/* Header */}
-      <div className="border-b border-gray-200 px-4 sm:px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Users</h1>
-          <button
-            onClick={handleCreateUser}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-md flex items-center gap-2 text-sm"
-          >
-            <Plus size={16} />
-            <span className="hidden xs:inline">Create User</span>
-            <span className="xs:hidden">Create</span>
-          </button>
-        </div>
-      </div>
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.userName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      {/* Search and Filters */}
-      <div className="px-4 sm:px-6 py-4">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-          <div className="relative">
-            <select className="bg-white border border-gray-300 rounded-md px-3 py-2 pr-8 text-sm appearance-none w-full sm:w-auto">
-              <option>All</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
-          </div>
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button className="p-2 text-gray-400 hover:text-gray-600 sm:hidden">
-              <Search size={16} />
-            </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600">
-              <MoreHorizontal size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Users Table - Desktop */}
-      <div className="px-4 sm:px-6 hidden md:block">
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-            <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-500 uppercase">
-              <div className="col-span-3">Name</div>
-              <div className="col-span-2">User Name</div>
-              <div className="col-span-2">Title</div>
-              <div className="col-span-3">Email</div>
-              <div className="col-span-1">Is Active</div>
-              <div className="col-span-1"></div>
+  if (showCreateForm) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow">
+          {/* Header */}
+          <div className="border-b px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-500">Users</span>
+                <ChevronDown size={16} className="text-gray-400" />
+                <span className="text-blue-500">create</span>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleSubmit}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setShowCreateForm(false)}
+                  className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button className="px-2 py-2 text-gray-500 hover:text-gray-700">
+                  <MoreHorizontal size={20} />
+                </button>
+              </div>
             </div>
           </div>
 
-          {filteredUsers.map((user) => (
-            <div key={user.id} className="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 group">
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <div className="col-span-3 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                    {user.name.substring(0, 2).toUpperCase()}
+          <form onSubmit={handleSubmit} className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* User Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    User Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.userName}
+                    onChange={(e) =>
+                      handleInputChange("userName", e.target.value)
+                    }
+                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Name *
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        handleInputChange("firstName", e.target.value)
+                      }
+                      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        handleInputChange("lastName", e.target.value)
+                      }
+                      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{user.name}</span>
                 </div>
-                <div className="col-span-2 text-sm text-gray-600">{user.userName}</div>
-                <div className="col-span-2 text-sm text-gray-600">{user.title}</div>
-                <div className="col-span-3 text-sm text-gray-600">{user.email}</div>
-                <div className="col-span-1">
-                  {user.isActive && (
-                    <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                  )}
+
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
-                <div className="col-span-1">
-                  <div className="relative">
-                    <button className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ChevronDown size={16} />
-                    </button>
-                    <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 min-w-24 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity">
+
+                {/* Email */}
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
+                      className="flex-1 border border-gray-300 rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <div className="flex border-t border-b border-r border-gray-300 rounded-r">
                       <button
-                        onClick={() => handleViewUser(user)}
-                        className="w-full px-3 py-1 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                        type="button"
+                        onClick={() =>
+                          handleInputChange(
+                            "emailOptedOut",
+                            !formData.emailOptedOut
+                          )
+                        }
+                        className={`px-2 py-2 ${
+                          formData.emailOptedOut
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-50 text-gray-400"
+                        } hover:bg-gray-100`}
+                        title="Opted Out"
                       >
-                        <Eye size={14} />
-                        View
+                        <Ban size={16} />
                       </button>
                       <button
-                        onClick={() => handleEditUser(user)}
-                        className="w-full px-3 py-1 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                        type="button"
+                        onClick={() =>
+                          handleInputChange(
+                            "emailInvalid",
+                            !formData.emailInvalid
+                          )
+                        }
+                        className={`px-2 py-2 rounded-r ${
+                          formData.emailInvalid
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-50 text-gray-400"
+                        } hover:bg-gray-100`}
+                        title="Invalid"
                       >
-                        <Edit size={14} />
-                        Edit
+                        <AlertTriangle size={16} />
                       </button>
                     </div>
                   </div>
                 </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone
+                  </label>
+                  <div className="flex">
+                    <select className="border border-gray-300 rounded-l px-3 py-2 bg-white">
+                      <option>Mobile</option>
+                      <option>Office</option>
+                      <option>Home</option>
+                    </select>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
+                      placeholder="+1 000-000-0000"
+                      className="flex-1 border-t border-b border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <div className="flex border-t border-b border-r border-gray-300 rounded-r">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleInputChange(
+                            "phoneOptedOut",
+                            !formData.phoneOptedOut
+                          )
+                        }
+                        className={`px-2 py-2 ${
+                          formData.phoneOptedOut
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-50 text-gray-400"
+                        } hover:bg-gray-100`}
+                        title="Opted Out"
+                      >
+                        <Ban size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleInputChange(
+                            "phoneInvalid",
+                            !formData.phoneInvalid
+                          )
+                        }
+                        className={`px-2 py-2 rounded-r ${
+                          formData.phoneInvalid
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-50 text-gray-400"
+                        } hover:bg-gray-100`}
+                        title="Invalid"
+                      >
+                        <AlertTriangle size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Gender
+                  </label>
+                  <select
+                    value={formData.gender}
+                    onChange={(e) =>
+                      handleInputChange("gender", e.target.value)
+                    }
+                    className="w-full border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {genderOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Teams and Access Control */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Teams and Access Control
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Type */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Type
+                      </label>
+                      <select
+                        value={formData.type}
+                        onChange={(e) =>
+                          handleInputChange("type", e.target.value)
+                        }
+                        className="w-full border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        {typeOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Is Active */}
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="isActive"
+                        checked={formData.isActive}
+                        onChange={(e) =>
+                          handleInputChange("isActive", e.target.checked)
+                        }
+                        className="mr-2"
+                      />
+                      <label
+                        htmlFor="isActive"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Is Active
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Teams */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teams
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowTeamsModal(true)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-left bg-white hover:bg-gray-50 flex justify-between items-center"
+                    >
+                      <span className="text-gray-500">
+                        {formData.teams.length > 0
+                          ? `${formData.teams.length} selected`
+                          : "Select"}
+                      </span>
+                      <ChevronDown size={16} />
+                    </button>
+                  </div>
+
+                  {/* Default Team */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Default Team
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowDefaultTeamModal(true)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-left bg-white hover:bg-gray-50 flex justify-between items-center"
+                    >
+                      <span
+                        className={
+                          formData.defaultTeam
+                            ? "text-gray-900"
+                            : "text-gray-500"
+                        }
+                      >
+                        {formData.defaultTeam || "Select"}
+                      </span>
+                      <ChevronDown size={16} />
+                    </button>
+                  </div>
+
+                  {/* Roles */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Roles
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowRolesModal(true)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-left bg-white hover:bg-gray-50 flex justify-between items-center"
+                    >
+                      <span className="text-gray-500">
+                        {formData.roles.length > 0
+                          ? `${formData.roles.length} selected`
+                          : "Select"}
+                      </span>
+                      <ChevronDown size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Misc */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Misc
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Working Time Calendar */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Working Time Calendar
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setShowWorkingTimeModal(true)}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-left bg-white hover:bg-gray-50 flex justify-between items-center"
+                      >
+                        <span
+                          className={
+                            formData.workingTimeCalendar
+                              ? "text-gray-900"
+                              : "text-gray-500"
+                          }
+                        >
+                          {formData.workingTimeCalendar || "Select"}
+                        </span>
+                        <ChevronDown size={16} />
+                      </button>
+                    </div>
+
+                    {/* Layout Set */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Layout Set
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setShowLayoutModal(true)}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-left bg-white hover:bg-gray-50 flex justify-between items-center"
+                      >
+                        <span
+                          className={
+                            formData.layoutSet
+                              ? "text-gray-900"
+                              : "text-gray-500"
+                          }
+                        >
+                          {formData.layoutSet || "Select"}
+                        </span>
+                        <ChevronDown size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Password
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Password
+                      </label>
+                      <div className="flex">
+                        <div className="relative flex-1">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            value={formData.password}
+                            onChange={(e) =>
+                              handleInputChange("password", e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-l px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-600"
+                          >
+                            {showPassword ? (
+                              <EyeOff size={16} />
+                            ) : (
+                              <Eye size={16} />
+                            )}
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={generatePassword}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 flex items-center space-x-1"
+                        >
+                          <RefreshCw size={16} />
+                          <span className="hidden sm:inline">Generate</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm Password
+                      </label>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={formData.confirmPassword}
+                        onChange={(e) =>
+                          handleInputChange("confirmPassword", e.target.value)
+                        }
+                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Avatar */}
+              {/* Right Column - Avatar */}
+              <div className="lg:col-span-1">
+                <div className="bg-gray-50 rounded-lg p-6 text-center">
+                  <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden">
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt="Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-400 text-lg">No Image</span>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    id="avatar-upload"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="avatar-upload"
+                    className="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
+                  >
+                    Upload Avatar
+                  </label>
+                </div>
               </div>
             </div>
-          ))}
+          </form>
+
+          {/* Modals */}
+          <SelectModal
+            show={showTeamsModal}
+            onClose={() => setShowTeamsModal(false)}
+            title="Select Teams"
+            options={teams}
+            selected={formData.teams}
+            onToggle={(team) => toggleSelection("teams", team)}
+          />
+
+          <SelectModal
+            show={showDefaultTeamModal}
+            onClose={() => setShowDefaultTeamModal(false)}
+            title="Select Default Team"
+            options={teams}
+            selected={formData.defaultTeam}
+            onToggle={(team) => handleInputChange("defaultTeam", team)}
+            single={true}
+          />
+
+          <SelectModal
+            show={showRolesModal}
+            onClose={() => setShowRolesModal(false)}
+            title="Select Roles"
+            options={roles}
+            selected={formData.roles}
+            onToggle={(role) => toggleSelection("roles", role)}
+          />
+
+          <SelectModal
+            show={showWorkingTimeModal}
+            onClose={() => setShowWorkingTimeModal(false)}
+            title="Select Working Time Calendar"
+            options={workingTimeCalendars}
+            selected={formData.workingTimeCalendar}
+            onToggle={(calendar) =>
+              handleInputChange("workingTimeCalendar", calendar)
+            }
+            single={true}
+          />
+
+          <SelectModal
+            show={showLayoutModal}
+            onClose={() => setShowLayoutModal(false)}
+            title="Select Layout Set"
+            options={layoutSets}
+            selected={formData.layoutSet}
+            onToggle={(layout) => handleInputChange("layoutSet", layout)}
+            single={true}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow">
+        {/* Header */}
+        <div className="border-b px-6 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              <Plus size={16} />
+              <span>Create User</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="p-6 border-b">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search
+                size={20}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <select className="px-3 py-2 border border-gray-300 rounded bg-white">
+              <option>All</option>
+              <option>Active</option>
+              <option>Inactive</option>
+            </select>
+            <button className="px-3 py-2 text-gray-500 hover:text-gray-700">
+              <MoreHorizontal size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Users Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button
+                    onClick={() =>
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    }
+                    className="flex items-center space-x-1 hover:text-gray-700"
+                  >
+                    <span>Name</span>
+                    {sortOrder === "asc" ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  User Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Title
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Is Active
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-yellow-600 text-sm font-medium">
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">
+                        {user.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {user.userName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {user.title}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {user.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {user.isActive ? (
+                      <Check size={16} className="text-green-500" />
+                    ) : (
+                      <X size={16} className="text-red-500" />
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button className="text-gray-400 hover:text-gray-600">
+                      <MoreHorizontal size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between py-4">
-          <span className="text-sm text-gray-500">1-1 / 1</span>
-          <div className="flex items-center gap-2">
-            <button className="p-1 text-gray-400">
-              <ChevronDown className="rotate-90" size={16} />
-            </button>
-            <button className="p-1 text-gray-400">
-              <ChevronDown className="-rotate-90" size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Users Cards - Mobile/Tablet */}
-      <div className="px-4 sm:px-6 md:hidden">
-        <div className="space-y-4">
-          {filteredUsers.map((user) => (
-            <div key={user.id} className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
-                    {user.name.substring(0, 2).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-medium text-gray-900 truncate">{user.name}</h3>
-                    <p className="text-xs text-gray-500 truncate">@{user.userName}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {user.isActive && (
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  )}
-                  <button
-                    onClick={() => toggleMobileMenu(user.id)}
-                    className="p-1 text-gray-400 hover:text-gray-600"
-                  >
-                    <Menu size={16} />
-                  </button>
-                </div>
-              </div>
-              
-              <div className="mt-3 space-y-1">
-                {user.title && (
-                  <p className="text-xs text-gray-600">
-                    <span className="font-medium">Title:</span> {user.title}
-                  </p>
-                )}
-                {user.email && (
-                  <p className="text-xs text-gray-600 truncate">
-                    <span className="font-medium">Email:</span> {user.email}
-                  </p>
-                )}
-                <p className="text-xs text-gray-600">
-                  <span className="font-medium">Type:</span> {user.type}
-                </p>
-              </div>
-
-              {/* Mobile Menu */}
-              {showMobileMenu[user.id] && (
-                <div className="mt-3 pt-3 border-t border-gray-200 flex gap-2">
-                  <button
-                    onClick={() => handleViewUser(user)}
-                    className="flex-1 px-3 py-2 text-xs bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center justify-center gap-1"
-                  >
-                    <Eye size={12} />
-                    View
-                  </button>
-                  <button
-                    onClick={() => handleEditUser(user)}
-                    className="flex-1 px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 flex items-center justify-center gap-1"
-                  >
-                    <Edit size={12} />
-                    Edit
-                  </button>
-                </div>
-              )}
+        <div className="px-6 py-4 border-t">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-gray-500">
+              Showing 1-{filteredUsers.length} of {filteredUsers.length}
             </div>
-          ))}
-        </div>
-
-        {/* Mobile Pagination */}
-        <div className="flex items-center justify-between py-4">
-          <span className="text-sm text-gray-500">1-1 / 1</span>
-          <div className="flex items-center gap-2">
-            <button className="p-1 text-gray-400">
-              <ChevronDown className="rotate-90" size={16} />
-            </button>
-            <button className="p-1 text-gray-400">
-              <ChevronDown className="-rotate-90" size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-500">Users</span>
-                <span className="text-gray-400">›</span>
-                <span className="text-gray-600">
-                  {modalMode === 'create' ? 'create' : modalMode === 'view' ? 'view' : 'edit'}
-                </span>
-              </div>
+            <div className="flex items-center space-x-2">
               <button
-                onClick={() => setShowModal(false)}
-                className="p-1 text-gray-400 hover:text-gray-600"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
               >
-                <X size={20} />
+                Previous
+              </button>
+              <span className="px-3 py-1 text-sm bg-blue-500 text-white rounded">
+                1
+              </span>
+              <button
+                disabled={filteredUsers.length < 10}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Next
               </button>
             </div>
-
-            {/* Modal Content */}
-            <div className="p-4 sm:p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Column */}
-                <div className="lg:col-span-2 space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        User Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.userName}
-                        onChange={(e) => handleInputChange('userName', e.target.value)}
-                        disabled={modalMode === 'view'}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Name <span className="text-red-500">*</span>
-                      </label>
-                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
-                        <input
-                          type="text"
-                          placeholder="First Name"
-                          value={formData.firstName}
-                          onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          disabled={modalMode === 'view'}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Last Name"
-                          value={formData.lastName}
-                          onChange={(e) => handleInputChange('lastName', e.target.value)}
-                          disabled={modalMode === 'view'}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.title}
-                        onChange={(e) => handleInputChange('title', e.target.value)}
-                        disabled={modalMode === 'view'}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        disabled={modalMode === 'view'}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone
-                      </label>
-                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
-                        <input
-                          type="text"
-                          placeholder="Mobile"
-                          value={formData.mobile}
-                          onChange={(e) => handleInputChange('mobile', e.target.value)}
-                          disabled={modalMode === 'view'}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                        />
-                        <input
-                          type="text"
-                          placeholder="000-000-0000"
-                          value={formData.phone}
-                          onChange={(e) => handleInputChange('phone', e.target.value)}
-                          disabled={modalMode === 'view'}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Teams and Access Control */}
-                  <div className="border-t pt-4">
-                    <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">Teams and Access Control</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Type
-                        </label>
-                        <select
-                          value={formData.type}
-                          onChange={(e) => handleInputChange('type', e.target.value)}
-                          disabled={modalMode === 'view'}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                        >
-                          <option>Regular</option>
-                          <option>Admin</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          id="isActive"
-                          checked={formData.isActive}
-                          onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                          disabled={modalMode === 'view'}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
-                        />
-                        <label htmlFor="isActive" className="text-sm text-gray-700">
-                          Is Active
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Password Section */}
-                  {modalMode !== 'view' && (
-                    <div className="border-t pt-4">
-                      <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">Password</h3>
-                      <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Password
-                          </label>
-                          <div className="flex flex-col xs:flex-row gap-2">
-                            <input
-                              type="password"
-                              value={formData.password}
-                              onChange={(e) => handleInputChange('password', e.target.value)}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                            <button
-                              onClick={generatePassword}
-                              className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm hover:bg-gray-200 whitespace-nowrap"
-                            >
-                              Generate
-                            </button>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Confirm Password
-                          </label>
-                          <input
-                            type="password"
-                            value={formData.confirmPassword}
-                            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-2">
-                        You need to setup SMTP settings to make the system be able to send password in email.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Column - Avatar */}
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Avatar
-                  </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-8 text-center">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full mx-auto mb-2"></div>
-                    {modalMode !== 'view' && (
-                      <button className="text-sm text-blue-600 hover:text-blue-700">
-                        Upload
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            {modalMode !== 'view' && (
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-6 py-4 border-t border-gray-200 bg-gray-50 space-y-2 sm:space-y-0">
-                <div></div>
-                <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 text-center"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-center"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
-
 };
+
 export default Users;

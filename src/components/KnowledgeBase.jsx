@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Search, 
   Plus, 
   ChevronDown, 
   X, 
   MoreHorizontal, 
-  Paperclip,
-  ChevronLeft,
-  ChevronRight,
-  Minus,
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  List,
-  ListOrdered,
+  Paperclip, 
+  ChevronLeft, 
+  ChevronRight, 
+  Minus, 
+  Bold, 
+  Italic, 
+  Underline, 
+  Strikethrough, 
+  List, 
+  ListOrdered, 
   AlignLeft,
-  Table,
-  Link,
-  Image,
-  Code,
-  MoreVertical,
-  Info
+  AlignCenter,
+  AlignRight,
+  Table, 
+  Link, 
+  Image, 
+  Code, 
+  MoreVertical, 
+  Info 
 } from 'lucide-react';
 
 const KnowledgeBase = () => {
@@ -111,92 +113,240 @@ const KnowledgeBase = () => {
     </div>
   );
 
-  const RichTextEditor = () => (
-    <div className="border border-gray-300 rounded-md">
-      {/* Toolbar */}
-      <div className="border-b border-gray-200 p-2 flex flex-wrap items-center gap-1 bg-gray-50 rounded-t-md">
-        <button className="p-1 hover:bg-gray-200 rounded text-gray-600">
-          <div className="w-4 h-4 border border-gray-400"></div>
-        </button>
-        <div className="w-px h-6 bg-gray-300 mx-1"></div>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Bold className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Italic className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Underline className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Strikethrough className="w-4 h-4 text-gray-600" />
-        </button>
-        <div className="w-px h-6 bg-gray-300 mx-1"></div>
-        <div className="relative">
-          <select className="px-2 py-1 text-sm border border-gray-300 rounded appearance-none bg-white pr-6">
-            <option>14</option>
-            <option>12</option>
-            <option>16</option>
-            <option>18</option>
+  const RichTextEditor = () => {
+    const editorRef = useRef(null);
+    const [fontSize, setFontSize] = useState('14');
+    const [alignment, setAlignment] = useState('left');
+
+    const execCommand = (command, value = null) => {
+      document.execCommand(command, false, value);
+      editorRef.current?.focus();
+    };
+
+    const insertText = (text) => {
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        const textNode = document.createTextNode(text);
+        range.insertNode(textNode);
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    };
+
+    const handleContentChange = () => {
+      if (editorRef.current) {
+        const content = editorRef.current.innerHTML;
+        handleInputChange('body', content);
+      }
+    };
+
+    const handleFontSizeChange = (size) => {
+      setFontSize(size);
+      execCommand('fontSize', size);
+    };
+
+    const handleAlignmentChange = (align) => {
+      setAlignment(align);
+      const alignCommand = align === 'left' ? 'justifyLeft' : 
+                          align === 'center' ? 'justifyCenter' : 'justifyRight';
+      execCommand(alignCommand);
+    };
+
+    const insertTable = () => {
+      const tableHTML = `
+        <table border="1" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cell 1</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cell 2</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cell 3</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Cell 4</td>
+          </tr>
+        </table>
+      `;
+      document.execCommand('insertHTML', false, tableHTML);
+    };
+
+    const insertLink = () => {
+      const url = prompt('Enter URL:');
+      if (url) {
+        execCommand('createLink', url);
+      }
+    };
+
+    return (
+      <div className="border border-gray-300 rounded-md">
+        {/* Toolbar */}
+        <div className="border-b border-gray-200 p-2 flex flex-wrap items-center gap-1 bg-gray-50 rounded-t-md">
+          {/* Format Block */}
+          <select 
+            className="px-2 py-1 text-sm border border-gray-300 rounded appearance-none bg-white pr-6"
+            onChange={(e) => execCommand('formatBlock', e.target.value)}
+          >
+            <option value="">Normal</option>
+            <option value="<h1>">Heading 1</option>
+            <option value="<h2>">Heading 2</option>
+            <option value="<h3>">Heading 3</option>
+            <option value="<p>">Paragraph</option>
           </select>
-          <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-500 pointer-events-none" />
-        </div>
-        <div className="relative">
-          <button className="p-1 hover:bg-gray-200 rounded flex items-center">
-            <span className="w-4 h-4 text-gray-600 text-sm font-bold">A</span>
-            <ChevronDown className="w-3 h-3 text-gray-500 ml-1" />
+          
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          
+          {/* Formatting Buttons */}
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('bold')}
+          >
+            <Bold className="w-4 h-4 text-gray-600" />
           </button>
-        </div>
-        <div className="w-px h-6 bg-gray-300 mx-1"></div>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <List className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <ListOrdered className="w-4 h-4 text-gray-600" />
-        </button>
-        <div className="relative">
-          <button className="p-1 hover:bg-gray-200 rounded flex items-center">
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('italic')}
+          >
+            <Italic className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('underline')}
+          >
+            <Underline className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('strikeThrough')}
+          >
+            <Strikethrough className="w-4 h-4 text-gray-600" />
+          </button>
+          
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          
+          {/* Font Size */}
+          <select 
+            className="px-2 py-1 text-sm border border-gray-300 rounded appearance-none bg-white pr-6"
+            value={fontSize}
+            onChange={(e) => handleFontSizeChange(e.target.value)}
+          >
+            <option value="1">10</option>
+            <option value="2">13</option>
+            <option value="3">16</option>
+            <option value="4">18</option>
+            <option value="5">24</option>
+            <option value="6">32</option>
+            <option value="7">48</option>
+          </select>
+          
+          {/* Text Color */}
+          <input 
+            type="color" 
+            className="w-6 h-6 border border-gray-300 rounded cursor-pointer"
+            onChange={(e) => execCommand('foreColor', e.target.value)}
+            title="Text Color"
+          />
+          
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          
+          {/* Lists */}
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('insertUnorderedList')}
+          >
+            <List className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('insertOrderedList')}
+          >
+            <ListOrdered className="w-4 h-4 text-gray-600" />
+          </button>
+          
+          {/* Alignment */}
+          <button 
+            className={`p-1 hover:bg-gray-200 rounded ${alignment === 'left' ? 'bg-gray-200' : ''}`}
+            onClick={() => handleAlignmentChange('left')}
+          >
             <AlignLeft className="w-4 h-4 text-gray-600" />
-            <ChevronDown className="w-3 h-3 text-gray-500 ml-1" />
+          </button>
+          <button 
+            className={`p-1 hover:bg-gray-200 rounded ${alignment === 'center' ? 'bg-gray-200' : ''}`}
+            onClick={() => handleAlignmentChange('center')}
+          >
+            <AlignCenter className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            className={`p-1 hover:bg-gray-200 rounded ${alignment === 'right' ? 'bg-gray-200' : ''}`}
+            onClick={() => handleAlignmentChange('right')}
+          >
+            <AlignRight className="w-4 h-4 text-gray-600" />
+          </button>
+          
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          
+          {/* Insert Elements */}
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={insertTable}
+          >
+            <Table className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={insertLink}
+          >
+            <Link className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('insertImage', prompt('Enter image URL:'))}
+          >
+            <Image className="w-4 h-4 text-gray-600" />
+          </button>
+          
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          
+          {/* Undo/Redo */}
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('undo')}
+          >
+            <span className="w-4 h-4 text-gray-600 text-sm">↶</span>
+          </button>
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('redo')}
+          >
+            <span className="w-4 h-4 text-gray-600 text-sm">↷</span>
+          </button>
+          
+          {/* Clear Formatting */}
+          <button 
+            className="p-1 hover:bg-gray-200 rounded"
+            onClick={() => execCommand('removeFormat')}
+          >
+            <X className="w-4 h-4 text-gray-600" />
           </button>
         </div>
-        <div className="w-px h-6 bg-gray-300 mx-1"></div>
-        <div className="relative">
-          <button className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-200 flex items-center">
-            T
-            <ChevronDown className="w-3 h-3 text-gray-500 ml-1" />
-          </button>
-        </div>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Table className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Link className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Image className="w-4 h-4 text-gray-600" />
-        </button>
-        <div className="w-px h-6 bg-gray-300 mx-1"></div>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Minus className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <Code className="w-4 h-4 text-gray-600" />
-        </button>
-        <button className="p-1 hover:bg-gray-200 rounded">
-          <X className="w-4 h-4 text-gray-600" />
-        </button>
+        
+        {/* Editable Content Area */}
+        <div
+          ref={editorRef}
+          contentEditable
+          className="w-full min-h-32 p-3 focus:outline-none border-none"
+          onInput={handleContentChange}
+          dangerouslySetInnerHTML={{ __html: formData.body }}
+          style={{
+            minHeight: '128px',
+            maxHeight: '300px',
+            overflowY: 'auto'
+          }}
+        />
       </div>
-      
-      {/* Text Area */}
-      <textarea
-        className="w-full h-32 p-3 resize-none focus:outline-none border-none"
-        value={formData.body}
-        onChange={(e) => handleInputChange('body', e.target.value)}
-        placeholder="Start writing your article content..."
-      />
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -274,8 +424,7 @@ const KnowledgeBase = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           article.status === 'Published' ? 'bg-green-100 text-green-800' :
-                          article.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
+                          article.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
                         }`}>
                           {article.status}
                         </span>
@@ -299,7 +448,6 @@ const KnowledgeBase = () => {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={handleCancel}></div>
-            
             <div className="inline-block w-full max-w-4xl my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
               {/* Modal Header */}
               <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -313,7 +461,7 @@ const KnowledgeBase = () => {
                   </button>
                 </div>
               </div>
-
+              
               {/* Modal Actions */}
               <div className="flex items-center space-x-3 p-4 border-b border-gray-200">
                 <button 
@@ -332,7 +480,7 @@ const KnowledgeBase = () => {
                   Cancel
                 </button>
               </div>
-
+              
               {/* Modal Content */}
               <div className="p-6 max-h-96 overflow-y-auto">
                 <div className="space-y-6">
@@ -380,8 +528,7 @@ const KnowledgeBase = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                        Portals 
-                        <Info className="w-4 h-4 text-gray-400 ml-1" />
+                        Portals <Info className="w-4 h-4 text-gray-400 ml-1" />
                       </label>
                       <SelectField
                         value={formData.portals}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, Calendar, ChevronLeft, ChevronRight, MoreHorizontal, Info } from 'lucide-react';
+import { Search, Plus, Calendar, ChevronLeft, ChevronRight, MoreHorizontal, Info, ChevronDown } from 'lucide-react';
 import { Link } from "react-router-dom";
 
 
@@ -39,6 +39,15 @@ const WorkingTimeExceptions = () => {
       description: ''
     });
     setCurrentView('list');
+  };
+
+  const handleCalendarIconClick = (fieldName) => {
+    // Trigger the date input click
+    const dateInput = document.querySelector(`input[name="${fieldName}"]`);
+    if (dateInput) {
+      dateInput.focus();
+      dateInput.showPicker && dateInput.showPicker();
+    }
   };
 
   if (currentView === 'create') {
@@ -132,11 +141,15 @@ const WorkingTimeExceptions = () => {
                   <div className="relative">
                     <input
                       type="date"
+                      name="dateStart"
                       value={formData.dateStart}
                       onChange={(e) => handleInputChange('dateStart', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                     />
-                    <Calendar className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+                    <Calendar 
+                      className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer hover:text-gray-600" 
+                      onClick={() => handleCalendarIconClick('dateStart')}
+                    />
                   </div>
                 </div>
 
@@ -148,11 +161,15 @@ const WorkingTimeExceptions = () => {
                   <div className="relative">
                     <input
                       type="date"
+                      name="dateEnd"
                       value={formData.dateEnd}
                       onChange={(e) => handleInputChange('dateEnd', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                     />
-                    <Calendar className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+                    <Calendar 
+                      className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer hover:text-gray-600" 
+                      onClick={() => handleCalendarIconClick('dateEnd')}
+                    />
                   </div>
                 </div>
 
@@ -169,7 +186,9 @@ const WorkingTimeExceptions = () => {
                     >
                       <option value="">Select</option>
                     </select>
-                    <ChevronLeft className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 rotate-90" />
+                    <Link to="/workingtimecalendars">
+                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer hover:text-gray-600" />
+                    </Link>
                   </div>
                 </div>
 
@@ -186,7 +205,9 @@ const WorkingTimeExceptions = () => {
                     >
                       <option value="">Select</option>
                     </select>
-                    <ChevronLeft className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 rotate-90" />
+                    <Link to="/users">
+                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer hover:text-gray-600" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -281,7 +302,9 @@ const WorkingTimeExceptions = () => {
               <ChevronLeft size={20} />
             </button>
             <button className="text-gray-400 hover:text-gray-600 disabled:opacity-50" disabled>
+              <button className="text-gray-400 hover:text-gray-600 disabled:opacity-50" disabled>
               <ChevronRight size={20} />
+            </button>
             </button>
           </div>
         </div>
