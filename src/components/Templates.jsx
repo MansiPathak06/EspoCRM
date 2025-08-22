@@ -248,6 +248,17 @@ const Templates = () => {
                         <option value="Contact">Contact</option>
                         <option value="Lead">Lead</option>
                         <option value="Opportunity">Opportunity</option>
+                        <option value="Call">Call</option>
+                        <option value="Campaign">Campaign</option>
+                        <option value="Case">Case</option>
+                        <option value="Document">Document</option>
+                        <option value="Email">Email</option>
+                        <option value="knowledgeBaseArticle">Knowledge Base Article</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="targetList">Target List</option>
+                        <option value="Task">Task</option>
+                        <option value="User">User</option>
+                        
                       </select>
                       <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
                     </div>

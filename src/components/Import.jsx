@@ -62,10 +62,20 @@ const Import = () => {
                     onChange={(e) => setEntityType(e.target.value)}
                   >
                     <option value="">Select...</option>
-                    <option value="accounts">Accounts</option>
-                    <option value="contacts">Contacts</option>
-                    <option value="leads">Leads</option>
-                    <option value="opportunities">Opportunities</option>
+                        <option value="Account">Account</option>
+                        <option value="Contact">Contact</option>
+                        <option value="Lead">Lead</option>
+                        <option value="Opportunity">Opportunity</option>
+                        <option value="Call">Call</option>
+                        <option value="Campaign">Campaign</option>
+                        <option value="Case">Case</option>
+                        <option value="Document">Document</option>
+                        <option value="Email">Email</option>
+                        <option value="knowledgeBaseArticle">Knowledge Base Article</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="targetList">Target List</option>
+                        <option value="Task">Task</option>
+                        <option value="User">User</option>
                   </select>
                 </div>
                 <div>
