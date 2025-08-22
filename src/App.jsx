@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Login from "./components/Login";
+import AuthSystem from "./components/AuthSystem"; // New integrated auth component
 import Layout from "./components/Layout"; // formerly Dashboard.jsx
 import DashboardHome from "./components/DashboardHome"; // new dashboard content
 import AccountsPage from "./components/Accountspage";
@@ -73,19 +73,20 @@ import JobSettings from "./Admin/System/JobSettings";
 import OAuthProviders from "./Admin/Data/OAuthProviders";
 import AppSecrets from "./Admin/Data/AppSecrets";
 
-
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Login route - no layout */}
+        {/* Auth routes - using AuthSystem component */}
+        <Route path="/login" element={<AuthSystem />} />
+        <Route path="/register" element={<AuthSystem />} />
 
+        <Route path="/reset-password" element={<AuthSystem />} />
 
-        <Route path="/login" element={<Login />} />
+        {/* Root redirect to register (as requested) */}
+        <Route path="/" element={<Navigate to="/register" replace />} />
 
-                <Route path="/" element={<Navigate to="/login" replace />} />
-
-        {/* Layout with sidebar and topbar */}
+        {/* Layout with sidebar and topbar - protected routes */}
         <Route path="/" element={<Layout />}>
           <Route path="dashboard" element={<DashboardHome />} />
           <Route path="accounts" element={<AccountsPage />} />
@@ -122,56 +123,108 @@ const App = () => {
           <Route path="last-viewed" element={<LastViewed />} />
           <Route path="about" element={<About />} />
           {/* ---------------Admin Routes----------- */}
-           <Route path="/customization/entity-manager" element={<EntityManager/>} />
-           <Route path="/customization/layout-manager" element={<LayoutManager/>} />
-           <Route path="/customization/label-manager" element={<LabelManager/>} />
-           <Route path="/customization/template-manager" element={<TemplateManager/>} />
-           <Route path="/customization/template-manager" element={<TemplateManager/>} />
-           <Route path="/admin/account/AccountEntityManager" element={<AccountEntityManager/>} />
+          <Route
+            path="/customization/entity-manager"
+            element={<EntityManager />}
+          />
+          <Route
+            path="/customization/layout-manager"
+            element={<LayoutManager />}
+          />
+          <Route
+            path="/customization/label-manager"
+            element={<LabelManager />}
+          />
+          <Route
+            path="/customization/template-manager"
+            element={<TemplateManager />}
+          />
+          <Route
+            path="/customization/template-manager"
+            element={<TemplateManager />}
+          />
+          <Route
+            path="/admin/account/AccountEntityManager"
+            element={<AccountEntityManager />}
+          />
 
-
-           <Route path="/portal/portal" element={<Portal/>} />
-           <Route path="/portal/users" element={<PortalUsers/>} />
-           <Route path="/portal/roles" element={<PortalRoles/>} />
-           <Route path="/components/users" element={<Users/>}/>
-           <Route path="/components/teams" element={<Teams/>}/>
-           <Route path="/admin/users/role" element={<Role/>}/>
-           <Route path="/admin/users/auth-log" element={<AuthLog/>}/>
-           <Route path="/admin/users/auth-tokens" element={<AuthTokens/>}/>
-           <Route path="/admin/users/action-history" element={<ActionHistory/>}/>
-           <Route path="/admin/users/api-users" element={<APIUsers/>}/>
-          <Route path="/messaging/outbound-emails" element={<OutboundEmails/>}/>
-          <Route path="/messaging/inbound-emails" element={<InboundEmails/>}/>
-          <Route path="/messaging/group-email-accounts" element={<GroupEmailAccounts/>}/>
-          <Route path="/messaging/personal-email-accounts" element={<PersonalEmailAccounts/>}/>
-          <Route path="/messaging/email-filters" element={<EmailFilters/>}/>
-          <Route path="/messaging/email-filters" element={<EmailFilters/>}/>
-          <Route path="/messaging/group-email-folders" element={<GroupEmailFolders/>}/>
-          <Route path="/messaging/email-templates" element={<EmailTemplates/>}/>
-          <Route path="/messaging/sms" element={<SMS/>}/>
-          <Route path="/admin/system/settings" element={<Settings/>}/>
-          <Route path="/admin/system/user-interface" element={<UserInterface/>}/>
-          <Route path="/admin/system/authentication" element={<Authentication/>}/>
-          <Route path="/admin/system/currency" element={<Currency/>}/>
-          <Route path="/admin/system/notifications" element={<Notifications/>}/>
-          <Route path="/setup/working-time-calendars" element={<WorkingTimeCalendars/>}/>
-          <Route path="/setup/layout-sets" element={<LayoutSet/>}/>
-          <Route path="/setup/dashboard-templates" element={<DashboardTemplate/>}/>
-          <Route path="/setup/lead-capture" element={<LeadCapture/>}/>
-          <Route path="/setup/pdf-templates" element={<Template/>}/>
-          <Route path="/setup/webhooks" element={<Webhook/>}/>
-          <Route path="/setup/address-countries" element={<AddressCountry/>}/>
-          <Route path="/setup/authentication-providers" element={<AuthenticationProvider/>}/>
-          <Route path="/data/import" element={<Import/>}/>
-          <Route path="/data/attachments" element={<Attachments/>}/>
-          <Route path="/admin/system/job-settings" element={<JobSettings/>}/>
-          <Route path="/data/oauth-providers" element={<OAuthProviders/>}/>
-          <Route path="/data/app-secrets" element={<AppSecrets/>}/>
-          
+          <Route path="/portal/portal" element={<Portal />} />
+          <Route path="/portal/users" element={<PortalUsers />} />
+          <Route path="/portal/roles" element={<PortalRoles />} />
+          <Route path="/components/users" element={<Users />} />
+          <Route path="/components/teams" element={<Teams />} />
+          <Route path="/admin/users/role" element={<Role />} />
+          <Route path="/admin/users/auth-log" element={<AuthLog />} />
+          <Route path="/admin/users/auth-tokens" element={<AuthTokens />} />
+          <Route
+            path="/admin/users/action-history"
+            element={<ActionHistory />}
+          />
+          <Route path="/admin/users/api-users" element={<APIUsers />} />
+          <Route
+            path="/messaging/outbound-emails"
+            element={<OutboundEmails />}
+          />
+          <Route path="/messaging/inbound-emails" element={<InboundEmails />} />
+          <Route
+            path="/messaging/group-email-accounts"
+            element={<GroupEmailAccounts />}
+          />
+          <Route
+            path="/messaging/personal-email-accounts"
+            element={<PersonalEmailAccounts />}
+          />
+          <Route path="/messaging/email-filters" element={<EmailFilters />} />
+          <Route path="/messaging/email-filters" element={<EmailFilters />} />
+          <Route
+            path="/messaging/group-email-folders"
+            element={<GroupEmailFolders />}
+          />
+          <Route
+            path="/messaging/email-templates"
+            element={<EmailTemplates />}
+          />
+          <Route path="/messaging/sms" element={<SMS />} />
+          <Route path="/admin/system/settings" element={<Settings />} />
+          <Route
+            path="/admin/system/user-interface"
+            element={<UserInterface />}
+          />
+          <Route
+            path="/admin/system/authentication"
+            element={<Authentication />}
+          />
+          <Route path="/admin/system/currency" element={<Currency />} />
+          <Route
+            path="/admin/system/notifications"
+            element={<Notifications />}
+          />
+          <Route
+            path="/setup/working-time-calendars"
+            element={<WorkingTimeCalendars />}
+          />
+          <Route path="/setup/layout-sets" element={<LayoutSet />} />
+          <Route
+            path="/setup/dashboard-templates"
+            element={<DashboardTemplate />}
+          />
+          <Route path="/setup/lead-capture" element={<LeadCapture />} />
+          <Route path="/setup/pdf-templates" element={<Template />} />
+          <Route path="/setup/webhooks" element={<Webhook />} />
+          <Route path="/setup/address-countries" element={<AddressCountry />} />
+          <Route
+            path="/setup/authentication-providers"
+            element={<AuthenticationProvider />}
+          />
+          <Route path="/data/import" element={<Import />} />
+          <Route path="/data/attachments" element={<Attachments />} />
+          <Route path="/admin/system/job-settings" element={<JobSettings />} />
+          <Route path="/data/oauth-providers" element={<OAuthProviders />} />
+          <Route path="/data/app-secrets" element={<AppSecrets />} />
         </Route>
 
-        {/* Redirect root to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Redirect unknown routes to register */}
+        <Route path="*" element={<Navigate to="/register" replace />} />
       </Routes>
     </Router>
   );
