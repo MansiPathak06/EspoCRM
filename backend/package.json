@@ -5,6 +5,7 @@
   "description": "CRM Backend with Authentication",
   "main": "src/server.js",
   "scripts": {
+     "build": "npm rebuild bcrypt --build-from-source",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
   },
