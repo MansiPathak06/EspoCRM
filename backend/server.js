@@ -1,6 +1,6 @@
 import express from "express";
 import mysql from "mysql2/promise";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -116,7 +116,7 @@ app.post("/api/register", async (req, res) => {
     }
 
     console.log("🔐 Hashing password...");
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     console.log("💾 Inserting user into database...");
     // Using 'name' column instead of 'username' to match your database
@@ -161,7 +161,7 @@ app.post("/api/login", async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid password" });
     }
@@ -304,7 +304,7 @@ app.post("/api/reset-password", async (req, res) => {
     }
 
     // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
 
     // Update password and clear reset token
     await db.query(
